@@ -1,0 +1,31 @@
+@startuml
+
+start
+
+:初期位置へ移動;
+
+repeat :1段下げる;
+
+repeat :1個差し込み;
+
+repeat while (差し込んだ個数?) is (< 3)
+
+if (段数÷2の余り) then (0)
+
+:横に向ける;
+
+else (1)
+
+:向きを戻す;
+
+endif
+
+repeat while (最後の段?) is (No)
+
+:成型;
+
+:机上まで上昇;
+
+end
+
+@enduml
