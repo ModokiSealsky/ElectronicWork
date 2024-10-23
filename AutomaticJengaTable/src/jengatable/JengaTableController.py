@@ -9,7 +9,7 @@ class JengaTableController:
         self.angle_rate = 180 / 65535
 
     def getVolumeElevetor(self):
-        return self.e.read_u16() * self.angle_rate
+        return self.getAngle(self.e.read_u16())
     
     def getVolumeTurntable(self):
         return self.getAngle(self.t.read_u16())
@@ -24,4 +24,4 @@ class JengaTableController:
             vol = 0.0
         if vol > 180.0:
             vol = 180.0
-        return "{:.1f}".format(vol)
+        return float("{:.1f}".format(vol))
