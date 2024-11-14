@@ -47,21 +47,44 @@ class JengaTable:
         """
         self._exec_monitor
 
+    def setPushServoRange(st_angle, ed_angle):
+        """押出機可動範囲設定
+        """
+        if st_angle < 0 or ed_angle > 180 or st_angle >= ed_angle:
+            return
+        self._p_servo_st_angle = st_angle
+        self._p_servo_ed_angle = ed_angle
+
+    def setTurnTableServoRange(self, st_angle, ed_angle):
+        """ターンテーブル可動範囲設定
+        """
+        if st_angle < 0 or ed_angle > 180 or st_angle >= ed_angle:
+            return
+        self._t_servo_st_angle = st_angle
+        self._t_servo_ed_angle = ed_angle
+
+    def setStepmotorRange(self, init_down_step, stage_down_step, stage_count):
+        """エレベーター用ステップモーター移動量設定
+        """
+        self._elv_init_down_step = -1 * abs(init_down_step)
+        self._elv_stage_down_step = -1 * (stage_down_step)
+        self._elv_stage = abs(stage_count)
+
     # ==================
     # 装填機
     # ==================
     def _push(self):
         """ジェンガを1個押し出し
         """
-        self._t_servo.turn(180)
+        self._p_servo.turn(self._p_servo_st_angle)
         utime.sleep_ms(self._push_wait_ms)
-        self._t_servo.turn(0)
+        self._p_servo.turn(self._p_servo_ed_angle)
         utime.sleep_ms(self._push_wait_ms)
 
     def pushMove(self, angle):
         """押出機をを手動操作
         """
-        self._t_servo.turn(angle)
+        self._p_servo.turn(angle)
 
     # ==================
     # ターンテーブル
@@ -71,15 +94,15 @@ class JengaTable:
         """
         if self._is_table_turned:
             self._is_table_turned = False
-            self._t_servo.turn(0)
+            self._t_servo.turn(self._t_servo_st_angle)
             print("縦へ")
         else:
             self._is_table_turned = True
-            self._t_servo.turn(90)
+            self._t_servo.turn(self._t_servo_ed_angle)
             print("横へ")
         utime.sleep_ms(self._turn_wait_ms)
 
-    def tableTurn(self, angle):
+    def tableMove(self, angle):
         """ターンテーブルをを手動操作
         """
         self._t_servo.turn(angle)
@@ -124,6 +147,10 @@ class JengaTable:
         """
         print("reload start")
         self._exec_led.on()
+        # サーボを初期位置へ
+        self._p_servo.turn(self._p_servo_st_angle)
+        self._t_servo.turn(self._t_servo_st_angle)
+        utime.sleep_ms(500)
         # 組み立て開始位置へ下降
         self._elv_init_down()
         # 組み立て処理
