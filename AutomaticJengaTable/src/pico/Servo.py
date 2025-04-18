@@ -2,8 +2,10 @@ from machine import PWM, Pin
 
 class Servo:
     """サーボ制御クラス
-    pin番号を渡してインスタンス化する。
-    角度の指定のみ行える。
+
+        角度を指定してサーボを制御する
+        * pin番号を渡してインスタンス化する
+        * turnメソッドに0.0から180.0の範囲で角度を指定する
     """
     SV_MAX_DUTY = 65025
     SV_FREQ = 50
@@ -26,10 +28,5 @@ class Servo:
             angle = 0.0
         if angle > 180.0:
             ag = 180.0
-        duty = int((angle * 9.5 / 180 + 2.5) * 65535 / 100)
-        print(duty)
-        duty = int((angle * 9.5 / 180 + 2.5) * 655.35)
-        print(duty)
         duty = int((angle * 9.5 / 180.0 + 2.5) * 655.35)
-        print(duty)
         self.s.duty_u16(duty)
