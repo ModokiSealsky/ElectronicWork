@@ -1,97 +1,92 @@
 import utime
+from pico import Servo, StepMoterNEMA17
 
 # ジェンガテーブルクラス
 class JengaTable:
+    """ジェンガテーブルクラス
+
+        ステッピングモーター1個とサーボ2個で構成する全自動ジェンガテーブルを制御する。
+        * setPushServoで押し出し機用サーボと角度範囲を登録
+        * setTurnTableServoでターンテーブル用サーボと角度範囲を登録
+        * setElevetorStepMotorでエレベーター用ステッピングモーターと1cms下げるのに必要なステップ数を登録
+        * setStageCountでジェンガの段数を登録
+    """
     # ==================
     # セットアップ
     # ==================
     def __init__(self):
-        """初期化
-        """
+        """コンストラクタ"""
         self._is_table_turned = False
-        self._push_wait_ms = 1000
+        self._has_lcd = False
+        self._push_wait_ms = 600
         self._turn_wait_ms = 1000
-        self._elv_init_down_step = -500
-        self._elv_stage_down_step = -200
-        self._elv_stage = 3
-        self._p_servo_st_angle = 0
-        self._p_servo_ed_angle = 180
-        self._t_servo_st_angle = 0
-        self._t_servo_ed_angle = 180
 
-    def setPushServo(self, servo):
+    def setPushServo(self, servo:Servo, st_angle:float, ed_angle:float):
         """押出機用サーボを登録
+        Args:
+            servo: サーボ
+            st_angle: 引き込み時角度(0.0 <= angle <= 180.0)
+            ed_angle: 押し出し時角度(0.0 <= angle <= 180.0)
         """
         self._p_servo = servo
-        self._p_servo.turn(0)
-    
-    def setTurnTableServo(self, servo):
-        """ターンテーブル用サーボを登録
-        """
-        self._t_servo = servo
-        self._t_servo.turn(0)
-
-    def setElevetorStepMotor(self, stepmotor):
-        """エレベーター用ステッピングモーターを登録
-        """
-        self._e_stepmotor = stepmotor
-
-    def setExecLed(self, led):
-        """稼働中表示LEDを登録
-        """
-        self._exec_led = led
-        self._exec_led.off()
-
-    def setExecLcdMonitor(self, lcdmonitor):
-        """稼働状況モニターLCDを登録
-        """
-        self._exec_monitor
-
-    def setPushServoRange(st_angle, ed_angle):
-        """押出機可動範囲設定
-        """
-        if st_angle < 0 or ed_angle > 180 or st_angle >= ed_angle:
-            return
+        self._p_servo.turn(st_angle)
         self._p_servo_st_angle = st_angle
         self._p_servo_ed_angle = ed_angle
-
-    def setTurnTableServoRange(self, st_angle, ed_angle):
-        """ターンテーブル可動範囲設定
+    
+    def setTurnTableServo(self, servo:Servo, st_angle:float, ed_angle:float):
+        """ターンテーブル用サーボを登録
+        Args:
+            servo: サーボ
+            st_angle: 元位置角度(0.0 <= angle <= 180.0)
+            ed_angle: 回転時角度(0.0 <= angle <= 180.0)
         """
-        if st_angle < 0 or ed_angle > 180 or st_angle >= ed_angle:
-            return
+        self._t_servo = servo
+        self._t_servo.turn(st_angle)
         self._t_servo_st_angle = st_angle
         self._t_servo_ed_angle = ed_angle
 
-    def setStepmotorRange(self, init_down_step, stage_down_step, stage_count):
-        """エレベーター用ステップモーター移動量設定
+    def setElevetorStepMotor(self, stepmotor:StepMoterNEMA17, step_cnt_by_1cmdown:int):
+        """エレベーター用ステッピングモーターを登録
+        Args:
+            stepmotor: ステッピングモーター
+            step_cnt_by_1cm: 1cm移動させるためのステップ数
         """
-        self._elv_init_down_step = -1 * abs(init_down_step)
-        self._elv_stage_down_step = -1 * (stage_down_step)
-        self._elv_stage = abs(stage_count)
+        self._e_stepmotor = stepmotor
+        # テーブル上面と装填開始位置の差は2.7cm
+        self._elv_init_down_step = int(2.7 * step_cnt_by_1cmdown)
+        # ジェンガ1段は1.3cm
+        self._elv_stage_down_step = int(1.3 * step_cnt_by_1cmdown)
+
+    def setStageCount(self, stage_count:int):
+        """ジェンガの段数を登録
+        Args:
+            stage_count: ジェンガの段数
+        """
+        self._elv_stage = stage_count
+
+    def setLcdMonitor(self, lcd_monitor):
+        """稼働状況モニターLCDを登録
+        Args:
+            lcd_monitor: LCD(1802)
+        """
+        self._exec_monitor = lcd_monitor
+        self._has_lcd = False
 
     # ==================
     # 装填機
     # ==================
     def _push(self):
-        """ジェンガを1個押し出し
-        """
+        """ジェンガを1個押し出し"""
         self._p_servo.turn(self._p_servo_st_angle)
         utime.sleep_ms(self._push_wait_ms)
         self._p_servo.turn(self._p_servo_ed_angle)
         utime.sleep_ms(self._push_wait_ms)
 
-    def pushMove(self, angle):
-        """押出機をを手動操作
-        """
-        self._p_servo.turn(angle)
-
     # ==================
     # ターンテーブル
     # ==================
     def _tableTurn(self):
-        """ターンテーブルの向きを変更
-        """
+        """ターンテーブルの向きを変更"""
         if self._is_table_turned:
             self._is_table_turned = False
             self._t_servo.turn(self._t_servo_st_angle)
@@ -102,70 +97,103 @@ class JengaTable:
             print("横へ")
         utime.sleep_ms(self._turn_wait_ms)
 
-    def tableMove(self, angle):
-        """ターンテーブルをを手動操作
-        """
-        self._t_servo.turn(angle)
-
     # ==================
     # エレベーター
     # ==================
     def _elv_init_down(self):
-        """エレベーターをゲーム位置から装填開始位置へ移動
-        """
+        """エレベーターをゲーム位置から装填開始位置へ移動"""
         print("初期位置へ移動開始")
         self._e_stepmotor.step(self._elv_init_down_step)
         print("初期位置へ移動完了")
 
     def _elv_stage_down(self):
-        """エレベーターを1段分下降
-        """
+        """エレベーターを1段分下降"""
         print("1段降下開始")
         self._e_stepmotor.step(self._elv_stage_down_step)
         print("1段降下完了")
         
-
     def _elv_fullup(self):
-        """エレベーターをゲーム位置まで上昇
-        """
-        total_down_step = self._elv_init_down_step + self._elv_stage_down_step * self._elv_stage
+        """エレベーターをゲーム位置まで上昇"""
+        total_down_step = self._elv_init_down_step + self._elv_stage_down_step * (self._elv_stage - 1)
         upstep = total_down_step * -1
-        print("完成品上昇開始（{}step）".format(upstep))
+        print("完成品上昇開始（{0}step）".format(upstep))
         self._e_stepmotor.step(upstep)
         print("完成品上昇完了")
 
-    def elevatorMove(self, step):
-        """エレベーターを手動操作
+    # ==================
+    # 状態出力
+    # ==================
+    def infoStart(self):
+        """組み立て開始"""
+        print("reload start")
+
+    def infoBuilding(self, stage_cnt:int, push_cnt:int):
+        """組み立て中
+        Args:
+            stage_cnt: 組み立て中の段数
+            push_cnt: 押し出し中の個数
         """
-        self._e_stepmotor.step(step)
+        print("lv_cnt:{0} push_cnt:{1}".format(stage_cnt, push_cnt))
+
+    def infoEnd(self):
+        """組み立て終了"""
+        print("reload end")
 
     # ==================
     # ジェンガ組み立て処理
     # ==================
     def reload(self):
-        """ジェンガ組み立て処理
-        """
-        print("reload start")
-        self._exec_led.on()
-        # サーボを初期位置へ
+        """ジェンガ組み立て処理"""
+        self.infoStart()
+        # 押し出し機を引く -> 組み立て開始位置へ下降 -> テーブルを初期位置に回転
         self._p_servo.turn(self._p_servo_st_angle)
-        self._t_servo.turn(self._t_servo_st_angle)
         utime.sleep_ms(500)
-        # 組み立て開始位置へ下降
         self._elv_init_down()
+        utime.sleep_ms(500)
+        self._t_servo.turn(self._t_servo_st_angle)
+        self._is_table_turned = False
+        utime.sleep_ms(500)
         # 組み立て処理
         for lv_cnt in range(self._elv_stage):
-            print("lv_cnt:" + str(lv_cnt))
+            #print("lv_cnt:" + str(lv_cnt))
+            # テーブルを回転
+            self._tableTurn()
             # ジェンガを3個装填
             for p_cnt in range(3):
                 self._push()
-                print("pushcnt:" + str(p_cnt))
-            # 1段下げてテーブルを回転
-            self._elv_stage_down()
-            self._tableTurn()
+                #print("pushcnt:" + str(p_cnt))
+                self.infoBuilding(lv_cnt, p_cnt)
+            # 1段下げ
+            if(lv_cnt < self._elv_stage -1):
+                self._elv_stage_down()
         # 完成品を上昇
-        self._t_servo.turn(0)
         self._elv_fullup()
         # 組み立て完了
-        self._exec_led.off()
-        print("reload end")
+        self.infoEnd()
+
+    def demoReload(self):
+        print("demo start")
+        # 開始位置へ下降
+        self._elv_init_down()
+        # テーブルの向き変更
+        self._e_stepmotor.step(-200)
+        self._tableTurn()
+        self._e_stepmotor.step(200)
+        # ジェンガを3個装填
+        for p_cnt in range(3):
+            self._push()
+            print("pushcnt:" + str(p_cnt))
+        # テーブルの向き変更+1段下げ
+        self._e_stepmotor.step(-200)
+        self._tableTurn()
+        self._e_stepmotor.step(200)
+        self._elv_stage_down()
+        # ジェンガを3個装填
+        for p_cnt in range(3):
+            self._push()
+            print("pushcnt:" + str(p_cnt))
+        # 完成品を上昇
+        self._elv_stage = 2
+        self._elv_fullup()
+        print("demo_end")
+        
