@@ -11,6 +11,10 @@ class JengaTable:
         * setElevetorStepMotorでエレベーター用ステッピングモーターと1cms下げるのに必要なステップ数を登録
         * setStageCountでジェンガの段数を登録
     """
+
+    _WAIT_MS_PUSH = 600   # 待機ミリ秒_押出樹
+    _WAIT_MS_TURN = 1000  # 待機ミリ秒_ターンテーブル
+
     # ==================
     # セットアップ
     # ==================
@@ -18,8 +22,6 @@ class JengaTable:
         """コンストラクタ"""
         self._is_table_turned = False
         self._has_lcd = False
-        self._push_wait_ms = 600
-        self._turn_wait_ms = 1000
 
     def setPushServo(self, servo:Servo, st_angle:float, ed_angle:float):
         """押出機用サーボを登録
@@ -77,10 +79,10 @@ class JengaTable:
     # ==================
     def _push(self):
         """ジェンガを1個押し出し"""
-        self._p_servo.turn(self._p_servo_st_angle)
-        utime.sleep_ms(self._push_wait_ms)
         self._p_servo.turn(self._p_servo_ed_angle)
-        utime.sleep_ms(self._push_wait_ms)
+        utime.sleep_ms(self._WAIT_MS_PUSH)
+        self._p_servo.turn(self._p_servo_st_angle)
+        utime.sleep_ms(self._WAIT_MS_PUSH)
 
     # ==================
     # ターンテーブル
@@ -95,7 +97,7 @@ class JengaTable:
             self._is_table_turned = True
             self._t_servo.turn(self._t_servo_ed_angle)
             print("横へ")
-        utime.sleep_ms(self._turn_wait_ms)
+        utime.sleep_ms(self._WAIT_MS_TURN)
 
     # ==================
     # エレベーター
