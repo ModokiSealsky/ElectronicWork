@@ -18,6 +18,17 @@ class JengaTable:
     _WAIT_MS_TURN = 1000
     """待機ミリ秒_ターンテーブル"""
 
+    _WAIT_MS_SPLIT_TURN = 200
+    """待機ミリ秒_ターンテーブル回転ステップ"""
+
+    _SPLIT_TURN = 10
+    """ターンテーブル回転段数"""
+
+    _TURN_ANGLE_IDX = list(range(0, _SPLIT_TURN, 1))
+    """ターンテーブル回転ステップインデックス_正回転"""
+
+    _TURN_ANGLE_IDX_REV = list(range(_SPLIT_TURN -1, -1, -1))
+    """ターンテーブル回転ステップインデックス_逆回転"""
 
     # ==================
     # セットアップ
@@ -48,8 +59,12 @@ class JengaTable:
         """
         self._t_servo = servo
         self._t_servo.turn(st_angle)
-        self._t_servo_st_angle = st_angle
-        self._t_servo_ed_angle = ed_angle
+        step_angle = (ed_angle - st_angle) / self._SPLIT_TURN
+        turn_angle_list = []
+        for step_cnt in range(self._SPLIT_TURN - 1):
+            turn_angle_list.append(st_angle + step_angle * step_cnt)
+        turn_angle_list.append(ed_angle)
+        self._turn_angle_list = turn_angle_list
 
     def setElevetorStepMotor(self, stepmotor:StepMoterNEMA17, step_cnt_by_1cmdown:int):
         """エレベーター用ステッピングモーターを登録
@@ -91,16 +106,21 @@ class JengaTable:
     # ==================
     # ターンテーブル
     # ==================
-    def _tableTurn(self):
+    def _tableTurn(self, is_debug = False):
         """ターンテーブルの向きを変更"""
         if self._is_table_turned:
             self._is_table_turned = False
-            self._t_servo.turn(self._t_servo_st_angle)
-            print("縦へ")
+            idx_list = self._TURN_ANGLE_IDX
+            print("Turn To End Angle.")
         else:
             self._is_table_turned = True
-            self._t_servo.turn(self._t_servo_ed_angle)
-            print("横へ")
+            idx_list = self._TURN_ANGLE_IDX_REV
+            print("Turn To Start Angle.")
+        for idx in idx_list:
+            if is_debug:
+                print("turn_idx:{0:02d} angle:{1:5.1f}".format(idx, self._turn_angle_list[idx]))
+            self._t_servo.turn(self._turn_angle_list[idx])
+            utime.sleep_ms(self._WAIT_MS_SPLIT_TURN)
         utime.sleep_ms(self._WAIT_MS_TURN)
 
     # ==================
@@ -156,7 +176,7 @@ class JengaTable:
         utime.sleep_ms(500)
         self._elv_init_down()
         utime.sleep_ms(500)
-        self._t_servo.turn(self._t_servo_st_angle)
+        self._t_servo.turn(self._turn_angle_list[0])
         self._is_table_turned = False
         utime.sleep_ms(500)
         # 組み立て処理
@@ -203,3 +223,18 @@ class JengaTable:
         self._elv_fullup()
         print("demo_end")
         
+if __name__  == "__main__":
+    """テストコード"""
+    c = JengaTable()
+    # ターンインデックスの確認
+    print(c._TURN_ANGLE_IDX)
+    print(c._TURN_ANGLE_IDX_REV)
+    # ターンステップ角度の確認
+    s = Servo(0)
+    c.setTurnTableServo(s, 10.5, 89.6)
+    print(c._turn_angle_list)
+    c.setTurnTableServo(s, 110.1, 8.6)
+    print(c._turn_angle_list)
+    # ターン処理の確認
+    c._tableTurn(True)
+    c._tableTurn(True)
