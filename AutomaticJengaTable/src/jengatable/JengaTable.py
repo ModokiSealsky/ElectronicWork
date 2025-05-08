@@ -12,8 +12,12 @@ class JengaTable:
         * setStageCountでジェンガの段数を登録
     """
 
-    _WAIT_MS_PUSH = 600   # 待機ミリ秒_押出樹
-    _WAIT_MS_TURN = 1000  # 待機ミリ秒_ターンテーブル
+    _WAIT_MS_PUSH = 600   
+    """待機ミリ秒_押し出し機"""
+
+    _WAIT_MS_TURN = 1000
+    """待機ミリ秒_ターンテーブル"""
+
 
     # ==================
     # セットアップ
