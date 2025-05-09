@@ -59,7 +59,7 @@ class JengaTableController:
             t_angle: ターンテーブル用入力角度
             p_angle: 押し出し機用入力角度
         """
-        print("input e:{0} t:{1} p:{2}".format(e_angle, t_angle, p_angle))
+        print("input e:{0:05.1f} t:{1:05.1f} p:{2:05.1f}".format(e_angle, t_angle, p_angle))
 
     def move(self):
         """入力値に応じた角度へ動かす"""
@@ -69,6 +69,6 @@ class JengaTableController:
         self._info(stick_angle, t_srv_angle, p_srv_angle)
         e_step = int((stick_angle - 90.0) / 10.0)
         if e_step < -2 or e_step > 2:
-            self._s_motor.step(e_step)
+            self._s_motor.step(e_step * 5)
         self._t_servo.turn(t_srv_angle)
         self._p_servo.turn(p_srv_angle)
