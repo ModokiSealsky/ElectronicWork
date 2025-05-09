@@ -37,6 +37,7 @@ class JengaTable:
         """コンストラクタ"""
         self._is_table_turned = False
         self._has_lcd = False
+        self._elv_stage = 6 # ジェンガミニは6段
 
     def setPushServo(self, servo:Servo, st_angle:float, ed_angle:float):
         """押出機用サーボを登録
@@ -181,13 +182,11 @@ class JengaTable:
         utime.sleep_ms(500)
         # 組み立て処理
         for lv_cnt in range(self._elv_stage):
-            #print("lv_cnt:" + str(lv_cnt))
             # テーブルを回転
             self._tableTurn()
             # ジェンガを3個装填
             for p_cnt in range(3):
                 self._push()
-                #print("pushcnt:" + str(p_cnt))
                 self.infoBuilding(lv_cnt, p_cnt)
             # 1段下げ
             if(lv_cnt < self._elv_stage -1):
@@ -197,34 +196,10 @@ class JengaTable:
         # 組み立て完了
         self.infoEnd()
 
-    def demoReload(self):
-        print("demo start")
-        # 開始位置へ下降
-        self._elv_init_down()
-        # テーブルの向き変更
-        self._e_stepmotor.step(-200)
-        self._tableTurn()
-        self._e_stepmotor.step(200)
-        # ジェンガを3個装填
-        for p_cnt in range(3):
-            self._push()
-            print("pushcnt:" + str(p_cnt))
-        # テーブルの向き変更+1段下げ
-        self._e_stepmotor.step(-200)
-        self._tableTurn()
-        self._e_stepmotor.step(200)
-        self._elv_stage_down()
-        # ジェンガを3個装填
-        for p_cnt in range(3):
-            self._push()
-            print("pushcnt:" + str(p_cnt))
-        # 完成品を上昇
-        self._elv_stage = 2
-        self._elv_fullup()
-        print("demo_end")
-        
+# ==================
+# テストコード
+# ================== 
 if __name__  == "__main__":
-    """テストコード"""
     c = JengaTable()
     # ターンインデックスの確認
     print(c._TURN_ANGLE_IDX)
