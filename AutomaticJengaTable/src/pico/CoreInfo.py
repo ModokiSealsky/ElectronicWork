@@ -13,4 +13,4 @@ class CoreInfo:
     def getTemperature(self):
         val = self.t.read_u16() * self.vol_rate
         temp = 27 - (val-0.706)/0.001721
-        return "{:.1f}℃".format(temp)
+        return "{:.1f}c".format(temp)

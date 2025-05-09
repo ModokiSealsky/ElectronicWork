@@ -22,6 +22,16 @@ class StepMoterNEMA17:
         self._p_pul.value(0)
         self._pulsUtime = 5
 
+    def setBaseVolPin(self, pin_no):
+        """基準電圧ピン設定
+
+        GPIOを3.3V出力として使用する場合、ピン番号を指定する
+
+        Args:
+            pin_no (int): 基準電圧ピン番号
+        """
+        Pin(pin_no, Pin.OUT).value(1)
+
     def setUtime(self, utime):
         """step間隔指定
         Args:

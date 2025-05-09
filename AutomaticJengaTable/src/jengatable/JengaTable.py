@@ -1,5 +1,6 @@
 import utime
 from pico import Servo, StepMoterNEMA17
+from lib import LCD1602
 
 # ジェンガテーブルクラス
 class JengaTable:
@@ -86,13 +87,13 @@ class JengaTable:
         """
         self._elv_stage = stage_count
 
-    def setLcdMonitor(self, lcd_monitor):
+    def setLcdMonitor(self, lcd_monitor:LCD1602):
         """稼働状況モニターLCDを登録
         Args:
-            lcd_monitor: LCD(1802)
+            lcd_monitor: LCD(1602)
         """
         self._exec_monitor = lcd_monitor
-        self._has_lcd = False
+        self._has_lcd = True
 
     # ==================
     # 装填機
@@ -153,6 +154,10 @@ class JengaTable:
     def infoStart(self):
         """組み立て開始"""
         print("reload start")
+        if self._has_lcd:
+            self._exec_monitor.display_clear()
+            self._exec_monitor.print_line(1, "reload start")
+            self._exec_monitor.print_line(2, "")
 
     def infoBuilding(self, stage_cnt:int, push_cnt:int):
         """組み立て中
@@ -161,10 +166,17 @@ class JengaTable:
             push_cnt: 押し出し中の個数
         """
         print("lv_cnt:{0} push_cnt:{1}".format(stage_cnt, push_cnt))
+        if self._has_lcd:
+            self._exec_monitor.display_clear()
+            self._exec_monitor.print_line(1, "reloading")
+            self._exec_monitor.print_line(2, "lv:{0} p_cnt:{1}".format(stage_cnt, push_cnt))
 
     def infoEnd(self):
         """組み立て終了"""
         print("reload end")
+        if self._has_lcd:
+            self._exec_monitor.display_clear()
+            self._exec_monitor.print_line(1, "reload end")
 
     # ==================
     # ジェンガ組み立て処理
