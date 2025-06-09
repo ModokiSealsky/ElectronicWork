@@ -41,8 +41,8 @@ class ScoreBord:
         "U": 0b00111110,
         }
     """ 表示可能文字設定 """
-    
-    def __init__(self, i2c_ch:int, scl_pin_no:int, sda_pin_no:int):
+
+    def __init__(self, i2c_ch:int, scl_pin_no:int, sda_pin_no:int, is_debug = False):
         """初期化
 
             Args:
@@ -50,15 +50,20 @@ class ScoreBord:
                 scl_pin_no: 使用するSCLピン番号
                 sda_pin_no: 使用するSDAピン番号
         """
+        if is_debug:
+            return
         self._i2c = I2C(i2c_ch, scl=Pin(scl_pin_no), sda=Pin(sda_pin_no), freq=100000)
 
     def setI2cAddr(self, addr):
+    def setI2cAddr(self, addr, is_debug = False):
         """ I2Cスレーブアドレス設定
         
             Args:
                 addr: I2Cスレーブアドレス
         """
         self._addr = addr
+        if is_debug:
+            return
         self._i2c.writeto_mem(self._addr, 0x21, bytes(0x01)) # システムクロック有効
         self._i2c.writeto_mem(self._addr, 0x81, bytes(0x01)) # ディスプレイON
 
@@ -66,12 +71,14 @@ class ScoreBord:
         """ ディスプレイ消灯 """
         self._i2c.writeto_mem(self._addr, 0x80, bytes(0x01)) # ディスプレイOFF
 
-    def output(self, score:int):
+    def output(self, score:int, is_debug = False):
         """ 点数出力
         
             Args:
                 score: 点数(-999 <= score <= 9999のみ表示可能)
         """
+        if is_debug:
+            return
         if score > 9999:
             print("OVER")
             self._i2c.writeto_mem(self._addr, self._DIG_ADDR_1, bytes([self._CHAR[" "]]))
