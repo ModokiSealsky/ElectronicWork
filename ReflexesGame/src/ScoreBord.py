@@ -31,7 +31,13 @@ class ScoreBord:
         "9": 0b01101111,
         "-": 0b01000000,
         " ": 0b00000000,
+        "A": 0b01110111,
+        "C": 0b00111001,
+        "E": 0b01111001,
+        "F": 0b01110001,
         "H": 0b01110110,
+        "L": 0b00111000,
+        "O": 0b00111111,
         "U": 0b00111110,
         }
     """ 表示可能文字設定 """
@@ -87,6 +93,12 @@ class ScoreBord:
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes([self._CHAR[score_digit[2]]]))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes([self._CHAR[score_digit[3]]]))
 
+    def outputFoul(self):
+        """失敗表示"""
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_1, bytes([self._CHAR["F"]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes([self._CHAR["O"]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes([self._CHAR["U"]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes([self._CHAR["L"]]))
 
 
 # ==================
