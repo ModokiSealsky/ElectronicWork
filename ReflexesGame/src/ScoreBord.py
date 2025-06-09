@@ -125,7 +125,8 @@ if __name__  == "__main__":
     # ==================
     # I2C確認
     # ================== 
-    clz = ScoreBord(0 , 1, 0)
+    clz = ScoreBord(0 , 21, 20)
+    clz.setEngPin(22)
     i2c_addr_list = clz._i2c.scan()
     i2c_addr = i2c_addr_list[0]
     print("i2c_addr:{:#x}".format(i2c_addr))
@@ -165,6 +166,10 @@ if __name__  == "__main__":
     clz.output(9999)
     utime.sleep(1)
     clz.output(10000)
+    utime.sleep(1)
+    clz.outputFoul()
+    utime.sleep(1)
+    countup(clz)
     utime.sleep(1)
     clz.displayOff()
     print("test end   ----")
