@@ -54,7 +54,10 @@ class ScoreBord:
             return
         self._i2c = I2C(i2c_ch, scl=Pin(scl_pin_no), sda=Pin(sda_pin_no), freq=100000)
 
-    def setI2cAddr(self, addr):
+    def setEngPin(self, eng_pin_no:int):
+        """電圧出力ピン設定(GPIOで代用する場合)"""
+        Pin(eng_pin_no, Pin.OUT).on()
+
     def setI2cAddr(self, addr, is_debug = False):
         """ I2Cスレーブアドレス設定
         
