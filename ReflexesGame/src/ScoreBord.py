@@ -1,5 +1,5 @@
 from machine import Pin,I2C
-import utime
+import utime, _thread
 
 class ScoreBord:
     """スコアボードクラス
@@ -17,6 +17,11 @@ class ScoreBord:
     """ 桁別addr:左から1桁目 """
     _DIG_ADDR_4 = 6
     """ 桁別addr:左から1桁目 """
+
+    _score = 9999
+    """スコア保持変数"""
+    _score_upd_thread_status = False
+    """スコア更新スレッド稼働状態"""
 
     _CHAR = {# .GFEDCBA
         "0": 0b00111111,
@@ -74,7 +79,39 @@ class ScoreBord:
         """ ディスプレイ消灯 """
         self._i2c.writeto_mem(self._addr, 0x80, bytes(0x01)) # ディスプレイOFF
 
-    def output(self, score:int, is_debug = False):
+    def outputScore(self, score:int, is_debug = False):
+        """スコア更新"""
+        self._score = score
+        if not self._score_upd_thread_status:
+            # スレッド未起動の場合は同期更新
+            self._outputScore(score, is_debug)
+
+    def _scoreUpdate4thread(self):
+        """スレッド用スコア更新処理
+        
+            更新を止める場合はself._score_upd_thread_statusをFalseに変更する
+        """
+        print("Score Update Start")
+        while self._score_upd_thread_status:
+            self._outputScore(self._score)
+        self._outputScore(self._score)
+        print("Score Update Stop")
+
+
+    def scoreUpdateThreadStart(self):
+        """スコア更新スレッド開始"""
+        if self._score_upd_thread_status:
+            # 多重起動防止
+            return
+        self._score_upd_thread_status = True
+        self._score_upd_thread = _thread.start_new_thread(self._scoreUpdate4thread, ())
+
+    def screUpdateThreadStop(self):
+        """スコア更新スレッド停止"""
+        self._score_upd_thread_status = False
+        print("Score Update Stop")
+
+    def _outputScore(self, score:int, is_debug = False):
         """ 点数出力
         
             Args:
@@ -116,9 +153,23 @@ class ScoreBord:
 # ================== 
 def countup(clz:ScoreBord):
     """ カウントアップ表示確認 """
+    print("Count Up Start")
     for cnt in range(10000):
-        clz.output(cnt)
+        clz.outputScore(cnt)
         utime.sleep_ms(1)
+    print("Count Up End")
+
+def countupByThread(clz:ScoreBord):
+    """カウントアップ表示スレッド確認"""
+    print("Count Up Thread Start")
+    clz.outputScore(0)
+    clz.scoreUpdateThreadStart()
+    for cnt in range(10000):
+        clz.outputScore(cnt)
+        utime.sleep_ms(1)
+    clz.screUpdateThreadStop()
+    print("Count Up Thread End")
+
 
 if __name__  == "__main__":
     print("test start ----")
@@ -135,41 +186,45 @@ if __name__  == "__main__":
     # ==================
     # 表示確認
     # ==================
-    clz.output(-1000)
+    clz.outputScore(-1000)
     utime.sleep(1)
-    clz.output(-999)
+    clz.outputScore(-999)
     utime.sleep(1)
-    clz.output(0)
+    clz.outputScore(0)
     utime.sleep(1)
-    clz.output(1)
+    clz.outputScore(1)
     utime.sleep(1)
-    clz.output(1234)
     utime.sleep(1)
-    clz.output(0000)
+    clz.outputScore(0000)
     utime.sleep(1)
-    clz.output(1111)
+    clz.outputScore(1111)
     utime.sleep(1)
-    clz.output(2222)
+    clz.outputScore(2222)
     utime.sleep(1)
-    clz.output(3333)
+    clz.outputScore(3333)
     utime.sleep(1)
-    clz.output(4444)
+    clz.outputScore(4444)
     utime.sleep(1)
-    clz.output(5555)
+    clz.outputScore(5555)
     utime.sleep(1)
-    clz.output(6666)
+    clz.outputScore(6666)
     utime.sleep(1)
-    clz.output(7777)
+    clz.outputScore(7777)
     utime.sleep(1)
-    clz.output(8888)
+    clz.outputScore(8888)
     utime.sleep(1)
-    clz.output(9999)
+    clz.outputScore(9999)
     utime.sleep(1)
-    clz.output(10000)
+    clz.outputScore(10000)
     utime.sleep(1)
     clz.outputFoul()
     utime.sleep(1)
+    # ==================
+    # カウントアップ確認
+    # ==================
     countup(clz)
+    utime.sleep(1)
+    countupByThread(clz)
     utime.sleep(1)
     clz.displayOff()
     print("test end   ----")
