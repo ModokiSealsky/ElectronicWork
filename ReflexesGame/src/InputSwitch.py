@@ -23,7 +23,7 @@ class InputSwitch:
 # ==================
 if __name__  == "__main__":
     print("test start ----")
-    btn = InputSwitch(3)
+    btn = InputSwitch(19)
     btn_cnt = 0
     while btn_cnt < 4:
         print("btn on:{0}/off:{1} | cnt:{2}".format(btn.isOn(), btn.isOff(), btn_cnt))
