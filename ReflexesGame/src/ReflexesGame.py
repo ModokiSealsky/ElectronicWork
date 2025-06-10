@@ -1,6 +1,8 @@
 from machine import Pin
 from Buzzer import Buzzer
 from ScoreBord import ScoreBord
+from Led import Led
+from InputSwitch import InputSwitch
 import utime,random
 
 class ReflexesGame:
@@ -17,6 +19,8 @@ class ReflexesGame:
                  , buzzer_l:Buzzer
                  , buzzer_h:Buzzer
                  , score_bord:ScoreBord
+                 , led_highscore:Led
+                 , led_timeup:Led
                  , order_size:int = 10):
         """初期化
 
@@ -26,19 +30,23 @@ class ReflexesGame:
                 buzzer_l:    低音ブザー
                 buzzer_h:    高音ブザー
                 score_bord:  点数表示用ディスプレイ
+                led_highscore: スコア更新LED
+                led_timeup:    時間切れLED
                 order_size:  ゲーム終了までのボタン順の長さ(デフォルト10)
         """
         self._BUTTON_COUNT = len(pin_lightes)
         self._ORDER_LIST_SIZE = order_size
         self._lightes = []
         for light_pin in pin_lightes:
-            self._lightes.append(Pin(light_pin, Pin.OUT, Pin.PULL_UP))
+            self._lightes.append(Led(light_pin))
         self._buttons = []
         for button_pin in pin_buttons:
-            self._buttons.append(Pin(button_pin, Pin.OUT, Pin.PULL_UP))
+            self._buttons.append(InputSwitch(button_pin))
         self._buzzer_l = buzzer_l
         self._buzzer_h = buzzer_h
         self._score_bord = score_bord
+        self._led_highscore = led_highscore
+        self._led_timeup = led_timeup
 
     def initGame(self):
         """ゲーム初期化
