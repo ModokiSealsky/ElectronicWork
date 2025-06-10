@@ -27,8 +27,15 @@ class Buzzer:
 # ================== 
 if __name__  == "__main__":
     print("test start ----")
-    buzzer = Buzzer(15)
-    buzzer.beep()
+    # 低音
+    buzzer_l = Buzzer(17)
+    buzzer_l.beep()
     utime.sleep_ms(1000)
-    buzzer.beep(500)
+    buzzer_l.beep(500)
+    utime.sleep_ms(1000)
+    # 高音
+    buzzer_h = Buzzer(16)
+    buzzer_h.beep()
+    utime.sleep_ms(1000)
+    buzzer_h.beep(500)
     print("test end   ----")
