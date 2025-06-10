@@ -14,8 +14,8 @@ class ReflexesGame:
     """ 最高得点更新フラグ """
 
     def __init__(self
-                 , pin_lightes
-                 , pin_buttons
+                 , lightes:list[Led]
+                 , buttons:list[InputSwitch]
                  , buzzer_l:Buzzer
                  , buzzer_h:Buzzer
                  , score_bord:ScoreBord
@@ -25,8 +25,8 @@ class ReflexesGame:
         """初期化
 
             Aggs:
-                pin_lights:  ライト用GPIOピン番号配列
-                pin_buttons: ボタン用GPIOピン番号配列
+                lights:      ライト用LED配列
+                buttons:     ボタン配列
                 buzzer_l:    低音ブザー
                 buzzer_h:    高音ブザー
                 score_bord:  点数表示用ディスプレイ
@@ -34,14 +34,10 @@ class ReflexesGame:
                 led_timeup:    時間切れLED
                 order_size:  ゲーム終了までのボタン順の長さ(デフォルト10)
         """
-        self._BUTTON_COUNT = len(pin_lightes)
+        self._BUTTON_COUNT = len(lightes)
         self._ORDER_LIST_SIZE = order_size
-        self._lightes = []
-        for light_pin in pin_lightes:
-            self._lightes.append(Led(light_pin))
-        self._buttons = []
-        for button_pin in pin_buttons:
-            self._buttons.append(InputSwitch(button_pin))
+        self._lightes = lightes
+        self._buttons = buttons
         self._buzzer_l = buzzer_l
         self._buzzer_h = buzzer_h
         self._score_bord = score_bord
