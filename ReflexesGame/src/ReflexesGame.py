@@ -1,8 +1,7 @@
-from machine import Pin
-from Buzzer import Buzzer
-from ScoreBord import ScoreBord
-from Led import Led
-from InputSwitch import InputSwitch
+from .PicoLib.Buzzer import Buzzer
+from .PicoLib.InputSwitch import InputSwitch
+from .PicoLib.Led import Led
+from .PicoLib.ScoreBord import ScoreBord
 import utime,random
 
 class ReflexesGame:
@@ -44,34 +43,58 @@ class ReflexesGame:
         self._led_highscore = led_highscore
         self._led_timeup = led_timeup
 
-    def initGame(self):
+    def _initDisplay(self):
+        """表示系初期化"""
+        self._led_highscore.off()
+        self._led_timeup.off()
+        for light_idx in range(self._BUTTON_COUNT):
+            self._lightes[light_idx].off()
+
+    def initGame(self, order_list_size:int, button_count:int):
         """ゲーム初期化
         
             ゲーム中のボタン順をランダムで生成する。
             (同一ボタンが連続で設定されないように調整済)
+
+        Args:
+            order_list_size:
         """
-        order_list = []
-        for order_idx in range(self._ORDER_LIST_SIZE):
-            target_idx = random.randint(1, self._BUTTON_COUNT) % self._BUTTON_COUNT
-            if order_idx > 0:
-                if order_list[order_idx - 1] == target_idx:
-                    target_idx = (target_idx + 1) % self._BUTTON_COUNT
+        order_list:list[int] = []
+        for order_idx in range(order_list_size):
+            target_idx = random.randint(1, button_count) % button_count
+            if order_idx > 0 and order_list[order_idx - 1] == target_idx:
+                target_idx = (target_idx + 1) % button_count
             order_list.append(target_idx)
         return order_list
 
     def gameStert(self):
         """ゲーム開始"""
         print("Game Start!")
+        # 初期化
+        self._initDisplay()
         self._score_updated = False
-        score = 9999
+        order_list = self.initGame(self._ORDER_LIST_SIZE, self._BUTTON_COUNT)
         order_idx = 0
-        while score >= 0:
-            self._score_bord.output(score)
+        now_target = order_list[order_idx]
 
-            # ゲーム終了判定
-            if order_idx >= self._ORDER_LIST_SIZE:
-                self._gameFinish(score)
-                return
+        # 開始処理
+        score = 9999
+        self._score_bord.outputScore(score)
+        self._score_bord.scoreUpdateThreadStart()
+        self._startSignal()
+        self._lightOn(now_target)
+        while score >= 0:
+            self._score_bord.outputScore(score)
+            # 正解判定
+            if self._isHit(now_target):
+                self._lightHit(now_target)
+                order_idx += 1
+                # ゲーム終了判定
+                if order_idx >= self._ORDER_LIST_SIZE:
+                    self._gameFinish(score)
+                    return
+                now_target = order_list[order_idx]
+                self._lightOn(now_target)
             score -= 1
             utime.sleep_ms(1)
         # タイムオーバー処理
@@ -79,12 +102,23 @@ class ReflexesGame:
 
     def _gameFinish(self, score:int):
         """ゲーム終了"""
-        self._score_bord.output(score)
+        self._score_bord.screUpdateThreadStop()
+        self._score_bord.outputScore(score)
         self._buzzer_l.beep()
         self._buzzer_h.beep()
         if score > self._high_score:
-            self._high_score = score
-            self._score_updated = True
+            self._updateScore(score)
+
+    def _updateScore(self, score:int):
+        """ハイスコア更新
+
+        Args:
+            score: ゲームスコア
+        """
+        self._high_score = score
+        self._score_updated = True
+        self._led_highscore.on()
+
 
     def _timeOver(self, order_idx:int):
         """時間切れゲームオーバー処理
