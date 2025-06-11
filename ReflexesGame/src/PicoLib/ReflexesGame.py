@@ -1,7 +1,7 @@
-from .PicoLib.Buzzer import Buzzer
-from .PicoLib.InputSwitch import InputSwitch
-from .PicoLib.Led import Led
-from .PicoLib.ScoreBord import ScoreBord
+from .Buzzer import Buzzer
+from .InputSwitch import InputSwitch
+from .Led import Led
+from .ScoreBord import ScoreBord
 import utime,random
 
 class ReflexesGame:
