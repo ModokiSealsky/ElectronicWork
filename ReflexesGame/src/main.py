@@ -1,6 +1,6 @@
 """反応速度を測るゲーム_メイン(待機)ループ"""
 import utime
-from .__init__ import Buzzer, InputSwitch, Led ,ReflexesGame ,ScoreBord
+from PicoLib import Buzzer, InputSwitch, Led, ReflexesGame, ScoreBord
 
 # ピン指定 ---------------------------------------------------------------------
 P_BUZZER_L  = 17

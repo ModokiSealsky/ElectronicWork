@@ -1,6 +1,5 @@
 from machine import Pin
-from Led import Led
-from InputSwitch import InputSwitch
+from PicoLib import Led, InputSwitch
 import utime
 
 Pin(18, Pin.OUT).on
