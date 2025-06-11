@@ -93,6 +93,10 @@ class ReflexesGame:
             order_idx: 現在の表示順(何個目まで進んだかを把握)
         """
         print("Time Over! {0:02}".format(self._ORDER_LIST_SIZE - order_idx))
+        self._score_bord.screUpdateThreadStop()
+        self._buzzer_l.beep(1000)
+        self._led_timeup.on()
+        self._score_bord.outputFoul()
 
     def getHighScore(self):
         """現在のハイスコア取得"""
@@ -110,6 +114,19 @@ class ReflexesGame:
             utime.sleep_ms(800)
         print("go!")
         self._buzzer_h.beep(500)
+
+    def _lightOn(self, light_index:int):
+        """ライト点灯処理"""
+        self._lightes[light_index].on()
+        self._buzzer_l.beep()
+
+    def _lightHit(self, light_index:int):
+        """ライト消灯処理"""
+        self._lightes[light_index].off()
+        self._buzzer_h.beep()
+
+    def _isHit(self, btn_idx:int):
+        return self._buttons[btn_idx].isOn()
 
 # ==================
 # テストコード
