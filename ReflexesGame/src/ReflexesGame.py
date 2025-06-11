@@ -131,27 +131,54 @@ class ReflexesGame:
 # ==================
 # テストコード
 # ================== 
+class ReflexesGameTester:
+    """テスタークラス"""
+    LIGHTS = [Led(2), Led(4), Led(6), Led(8), Led(10), Led(12)]
+    BUTTONS = [InputSwitch(3), InputSwitch(5), InputSwitch(7), InputSwitch(9), InputSwitch(11), InputSwitch(13)]
+    BUZZER_L = Buzzer(17)
+    BUZZER_H = Buzzer(16)
+    LED_HIGHSCORE = Led(14)
+    LED_TIMEISUP = Led(15)
+
+    def __init__(self):
+        self.SCOREBORD = ScoreBord(0, 21, 20)
+        self.SCOREBORD.setEngPin(22)
+        self.SCOREBORD.setI2cAddr(0x70)
+        self._clz = ReflexesGame(self.LIGHTS
+                             , self.BUTTONS
+                             , self.BUZZER_L
+                             , self.BUZZER_H
+                             , self.SCOREBORD
+                             , self.LED_HIGHSCORE
+                             , self.LED_TIMEISUP)
+
+    def orderListTest(self):
+        print("len:5 cnt:3")
+        print(self._clz.initGame(5, 3))
+        print("len:10 cnt:6")
+        print(self._clz.initGame(10, 6))
+
+    def endLightTest(self):
+        """結果ライト点灯"""
+        print("High Score!")
+        self._clz._updateScore(2000)
+        utime.sleep(5)
+        self._clz._initDisplay()
+        print("Time Up.")
+        self._clz._timeOver(5)
+        utime.sleep(5)
+        self._clz._initDisplay()
+    
+    def startGame(self):
+        """ゲーム開始"""
+        self._clz.gameStert()
+
 if __name__  == "__main__":
     print("test")
-    buzzer_l = Buzzer(14)
-    buzzer_h = Buzzer(15)
-    score_bord = ScoreBord(0, 21, 22)
-    # ==================
+    tester = ReflexesGameTester()
     # 点灯順番生成
-    # ================== 
-    c = ReflexesGame([0,1,2,3,4,5]
-                     , [0,1,2,3,4,5]
-                     , buzzer_l
-                     , buzzer_h
-                     , score_bord)
-    print(c.initGame())
-    c = ReflexesGame([0,1,2,3]
-                     , [0,1,2,3]
-                     , buzzer_l
-                     , buzzer_h
-                     , score_bord)
-    print(c.initGame())
-    # ==================
-    # ゲーム開始時処理
-    # ================== 
-    c._startSignal()
+    tester.orderListTest()
+    # 結果ライト点灯
+    tester.endLightTest()
+    # ゲーム開始
+    tester.startGame()
