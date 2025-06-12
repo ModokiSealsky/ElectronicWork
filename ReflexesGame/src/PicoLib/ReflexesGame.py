@@ -140,7 +140,12 @@ class ReflexesGame:
         """
         self._high_score = score
         self._led_highscore.on()
-
+        utime.sleep(1)
+        self._buzzer_l.beep(50)
+        utime.sleep_ms(50)
+        self._buzzer_l.beep(50)
+        utime.sleep_ms(50)
+        self._buzzer_h.beep(1000)
 
     def _timeOver(self, order_idx:int):
         """時間切れゲームオーバー処理
