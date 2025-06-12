@@ -61,6 +61,7 @@ class ScoreBord:
         if is_debug:
             return
         self._i2c = I2C(i2c_ch, scl=Pin(scl_pin_no), sda=Pin(sda_pin_no), freq=100000)
+        print("I2C_ADDR:{0}".format(self._i2c.scan()))
 
     def setEngPin(self, eng_pin_no:int):
         """電圧出力ピン設定(GPIOで代用する場合)"""
@@ -99,7 +100,6 @@ class ScoreBord:
             self._outputScore(self._score)
         self._outputScore(self._score)
         print("Score Update Stop")
-
 
     def scoreUpdateThreadStart(self):
         """スコア更新スレッド開始"""
@@ -151,6 +151,7 @@ class ScoreBord:
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes([self._CHAR["L"]]))
 
     def displayCheck(self):
+        """全ビット表示確認"""
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_1, bytes(self._FULLBIT))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes(self._FULLBIT))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes(self._FULLBIT))
@@ -160,8 +161,6 @@ class ScoreBord:
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes([self._CHAR[" "]]))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes([self._CHAR[" "]]))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes([self._CHAR[" "]]))
-
-
 
 # ==================
 # テストコード
@@ -184,7 +183,6 @@ def countupByThread(clz:ScoreBord):
         utime.sleep_ms(1)
     clz.screUpdateThreadStop()
     print("Count Up Thread End")
-
 
 if __name__  == "__main__":
     print("test start ----")
