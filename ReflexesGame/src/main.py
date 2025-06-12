@@ -18,11 +18,12 @@ P_7SEG_SCL  = 21
 # ------------------------------------------------------------------------------
 
 # セットアップ -----------------------------------------------------------------
+lights = [Led(pin_no) for pin_no in P_LIGHTS]
 start_btn = InputSwitch(P_START_BTN)
 score_bord = ScoreBord(CH_7SEG_DP, P_7SEG_SCL, P_7SEG_SDA)
 #score_bord.setEngPin(P_7SEG_ENG)
 score_bord.setI2cAddr(ADD_7SEG_D)
-game_logic = ReflexesGame([Led(pin_no) for pin_no in P_LIGHTS]
+game_logic = ReflexesGame(lights
                           , [InputSwitch(pin_no) for pin_no in P_BUTTONS]
                           , Buzzer(P_BUZZER_L)
                           , Buzzer(P_BUZZER_H)
@@ -31,9 +32,21 @@ game_logic = ReflexesGame([Led(pin_no) for pin_no in P_LIGHTS]
                           , Led(P_GAMEOVER))
 # ------------------------------------------------------------------------------
 
+# 待機時アニメーション -------------------------------------------------------------------
+lights_idx:int = 0
+lights_len:int = len(lights)
+def waitAnimation(idx:int, _len:int):
+    for light in lights:
+        light.off()
+    idx = (idx + 1) % _len
+    lights[idx].on()
+    return idx
+# ------------------------------------------------------------------------------
+
 # 待機ループ -------------------------------------------------------------------
 start_btn_cnt = 0
 while True:
+    lights_idx = waitAnimation(lights_idx, lights_len)
     if start_btn.isOn():
         start_btn_cnt += 1
     else:
