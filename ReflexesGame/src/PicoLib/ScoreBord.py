@@ -47,6 +47,9 @@ class ScoreBord:
         }
     """ 表示可能文字設定 """
 
+    _FULLBIT = 0b11111111
+    """全セグ点灯"""
+
     def __init__(self, i2c_ch:int, scl_pin_no:int, sda_pin_no:int, is_debug = False):
         """初期化
 
@@ -147,6 +150,18 @@ class ScoreBord:
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes([self._CHAR["U"]]))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes([self._CHAR["L"]]))
 
+    def displayCheck(self):
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_1, bytes(self._FULLBIT))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes(self._FULLBIT))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes(self._FULLBIT))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes(self._FULLBIT))
+        utime.sleep(2)
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_1, bytes([self._CHAR[" "]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes([self._CHAR[" "]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes([self._CHAR[" "]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes([self._CHAR[" "]]))
+
+
 
 # ==================
 # テストコード
@@ -177,7 +192,7 @@ if __name__  == "__main__":
     # I2C確認
     # ================== 
     clz = ScoreBord(0 , 21, 20)
-    clz.setEngPin(22)
+    #clz.setEngPin(22)
     i2c_addr_list = clz._i2c.scan()
     i2c_addr = i2c_addr_list[0]
     print("i2c_addr:{:#x}".format(i2c_addr))
