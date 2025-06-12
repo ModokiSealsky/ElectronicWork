@@ -218,16 +218,11 @@ class ReflexesGameTester:
         print("len:10 cnt:6")
         print(self._clz.orderShafle(10, 6))
 
-    def endLightTest(self):
-        """結果ライト点灯"""
-        print("High Score!")
-        self._clz._updateScore(2000)
-        utime.sleep(5)
-        self._clz._initDisplay()
-        print("Time Up.")
-        self._clz._timeOver(5)
-        utime.sleep(5)
-        self._clz._initDisplay()
+    def partsCheck(self):
+        """各パーツチェック"""
+        print("Parts Check Start")
+        self._clz.partsCheck()
+        print("Parts Check End")
     
     def startGame(self):
         """ゲーム開始"""
@@ -238,7 +233,7 @@ if __name__  == "__main__":
     tester = ReflexesGameTester()
     # 点灯順番生成
     tester.orderListTest()
-    # 結果ライト点灯
-    tester.endLightTest()
+    # 各パーツチェック
+    tester.partsCheck()
     # ゲーム開始
     tester.startGame()
