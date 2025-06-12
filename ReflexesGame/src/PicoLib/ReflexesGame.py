@@ -202,7 +202,7 @@ class ReflexesGameTester:
 
     def __init__(self):
         self.SCOREBORD = ScoreBord(0, 21, 20)
-        self.SCOREBORD.setEngPin(22)
+        # self.SCOREBORD.setEngPin(22)
         self.SCOREBORD.setI2cAddr(0x70)
         self._clz = ReflexesGame(self.LIGHTS
                              , self.BUTTONS

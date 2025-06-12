@@ -14,13 +14,13 @@ CH_7SEG_DP  = 0
 ADD_7SEG_D  = 0x70
 P_7SEG_SDA  = 20
 P_7SEG_SCL  = 21
-P_7SEG_ENG  = 22
+#P_7SEG_ENG  = 22
 # ------------------------------------------------------------------------------
 
 # セットアップ -----------------------------------------------------------------
 start_btn = InputSwitch(P_START_BTN)
 score_bord = ScoreBord(CH_7SEG_DP, P_7SEG_SCL, P_7SEG_SDA)
-score_bord.setEngPin(P_7SEG_ENG)
+#score_bord.setEngPin(P_7SEG_ENG)
 score_bord.setI2cAddr(ADD_7SEG_D)
 game_logic = ReflexesGame([Led(pin_no) for pin_no in P_LIGHTS]
                           , [InputSwitch(pin_no) for pin_no in P_BUTTONS]
