@@ -43,6 +43,32 @@ class ReflexesGame:
         self._led_highscore = led_highscore
         self._led_timeup = led_timeup
 
+    def partsCheck(self):
+        """パーツチェック"""
+        # ライトチェック
+        for l in self._lightes:
+            l.on()
+        utime.sleep(2)
+        for l in self._lightes:
+            l.off()
+        # 結果ライト、ブザーチェック
+        self._led_highscore.on()
+        self._buzzer_h.beep()
+        utime.sleep(2)
+        self._led_timeup.on()
+        self._buzzer_l.beep()
+        utime.sleep(2)
+        # 7セグディスプレイチェック
+        self._score_bord.displayCheck()
+        # ボタンチェック 2個以上同時押しで終了
+        btn_cnt = 0
+        while btn_cnt < 2:
+            btn_cnt = 0
+            for b in self._buttons:
+                if b.isOn():
+                    self._buzzer_l.beep()
+                    btn_cnt += 1
+
     def _initDisplay(self):
         """表示系初期化"""
         self._led_highscore.off()
