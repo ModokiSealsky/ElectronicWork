@@ -76,7 +76,7 @@ class ReflexesGame:
         for light_idx in range(self._BUTTON_COUNT):
             self._lightes[light_idx].off()
 
-    def initGame(self, order_list_size:int, button_count:int):
+    def orderShafle(self, order_list_size:int, button_count:int):
         """ゲーム初期化
         
             ゲーム中のボタン順をランダムで生成する。
@@ -99,7 +99,7 @@ class ReflexesGame:
         # 初期化
         self._initDisplay()
         self._score_updated = False
-        order_list = self.initGame(self._ORDER_LIST_SIZE, self._BUTTON_COUNT)
+        order_list = self.orderShafle(self._ORDER_LIST_SIZE, self._BUTTON_COUNT)
         order_idx = 0
         now_target = order_list[order_idx]
 
@@ -214,9 +214,9 @@ class ReflexesGameTester:
 
     def orderListTest(self):
         print("len:5 cnt:3")
-        print(self._clz.initGame(5, 3))
+        print(self._clz.orderShafle(5, 3))
         print("len:10 cnt:6")
-        print(self._clz.initGame(10, 6))
+        print(self._clz.orderShafle(10, 6))
 
     def endLightTest(self):
         """結果ライト点灯"""
