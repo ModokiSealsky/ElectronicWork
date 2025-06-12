@@ -101,10 +101,10 @@ class ReflexesGame:
         now_target = order_list[order_idx]
 
         # 開始処理
+        self._startSignal()
         score = 9999
         self._score_bord.outputScore(score)
         self._score_bord.scoreUpdateThreadStart()
-        self._startSignal()
         self._lightOn(now_target)
         while score >= 0:
             self._score_bord.outputScore(score)
