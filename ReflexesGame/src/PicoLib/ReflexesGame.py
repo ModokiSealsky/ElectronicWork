@@ -9,9 +9,6 @@ class ReflexesGame:
     _high_score = 0
     """ 最高得点 """
 
-    _score_updated = False
-    """ 最高得点更新フラグ """
-
     def __init__(self
                  , lightes:list[Led]
                  , buttons:list[InputSwitch]
@@ -142,7 +139,6 @@ class ReflexesGame:
             score: ゲームスコア
         """
         self._high_score = score
-        self._score_updated = True
         self._led_highscore.on()
 
 
@@ -162,9 +158,6 @@ class ReflexesGame:
         """現在のハイスコア取得"""
         return self._high_score
 
-    def isScoreUpdated(self):
-        """直前のゲームでハイスコア更新したかを取得"""
-        return self._score_updated
 
     def _startSignal(self):
         """ゲーム開始時演出"""
