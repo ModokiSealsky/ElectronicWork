@@ -48,7 +48,7 @@ while True:
         start_btn_cnt += 1
     else:
         start_btn_cnt = 0
-    if start_btn_cnt > 2:
+    if start_btn_cnt > 1:
         print("ゲームスタート")
         game_logic.game_stert()
     utime.sleep_ms(1000)
