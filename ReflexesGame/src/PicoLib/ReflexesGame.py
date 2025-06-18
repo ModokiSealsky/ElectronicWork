@@ -167,16 +167,16 @@ class ReflexesGame:
 
     def _start_signal(self):
         """ゲーム開始時演出"""
-        self._score_bord.output_message(" #3#")
+        self._score_bord.output_message("# 3#")
         self._buzzer_l.beep()
         utime.sleep_ms(800)
-        self._score_bord.output_message(" =2=")
+        self._score_bord.output_message("= 2=")
         self._buzzer_l.beep()
         utime.sleep_ms(800)
-        self._score_bord.output_message(" _1_")
+        self._score_bord.output_message("_ 1_")
         self._buzzer_l.beep()
         utime.sleep_ms(800)
-        self._score_bord.output_message(" GO!")
+        self._score_bord.output_message("GO!!")
         self._buzzer_h.beep(500)
 
     def _light_on(self, light_index:int):
