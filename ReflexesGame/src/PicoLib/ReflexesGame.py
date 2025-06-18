@@ -102,21 +102,31 @@ class ReflexesGame:
     def game_stert(self):
         """ゲーム開始"""
         print("Game Start!")
-        # 待機時アニメーション解除
+        # 待機時アニメーション停止
         self._is_waiting_mode = False
         self._buzzer_h.beep(1000)
         utime.sleep_ms(500)
         # 初期化
         self._init_display()
         order_list = self.order_shafle(self._ORDER_LIST_SIZE, self._BUTTON_COUNT)
-        order_idx = 0
-        now_target = order_list[order_idx]
-
         # 開始処理
         self._start_signal()
-        score = 9999
-        self._score_bord.output_score(score)
+        self._score_bord.output_score(9999)
         self._score_bord.score_update_thread_start()
+        # ゲーム開始
+        self._game_roop(order_list)
+        # 待機アニメーション開始
+        self._waiting_thread_start()
+
+    def _game_roop(self, order_list: list[int]):
+        """ゲーム処理ループ
+        
+            Args:
+                order_list: ボタン順リスト 
+        """
+        score = 9999
+        order_idx = 0
+        now_target = order_list[order_idx]
         self._light_on(now_target)
         while score >= 0:
             self._score_bord.output_score(score)
@@ -136,8 +146,6 @@ class ReflexesGame:
             utime.sleep_ms(1)
         # タイムオーバー処理
         self._time_over(order_idx)
-        self._waiting_thread_start()
-        print("----")
 
     def _game_finish(self, score:int):
         """ゲーム終了"""
