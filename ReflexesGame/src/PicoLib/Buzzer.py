@@ -1,10 +1,11 @@
-from machine import Pin
 import utime
+
+from machine import Pin
 
 class Buzzer:
     """ブザークラス"""
 
-    def __init__(self, gpio_pin_no:int):
+    def __init__(self, gpio_pin_no: int):
         """コンストラクタ
 
         Args:
@@ -12,7 +13,7 @@ class Buzzer:
         """
         self._buzzer = Pin(gpio_pin_no, Pin.OUT)
     
-    def beep(self, ms:int = 100):
+    def beep(self, ms: int = 100):
         """指定したミリ秒だけ音を鳴らす
         
         Args:

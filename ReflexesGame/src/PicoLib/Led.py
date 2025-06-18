@@ -1,9 +1,10 @@
-from machine import Pin
 import utime
+
+from machine import Pin
 
 class Led:
     """LEDクラス"""
-    def __init__(self, pin_no:int):
+    def __init__(self, pin_no: int):
         """"
         Args:
             pin_no: GPIOピン番号

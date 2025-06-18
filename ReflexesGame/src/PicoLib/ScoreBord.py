@@ -1,5 +1,7 @@
-from machine import Pin,I2C
-import utime, _thread
+import utime
+import  _thread
+
+from machine import Pin, I2C
 
 class ScoreBord:
     """スコアボードクラス
@@ -45,33 +47,39 @@ class ScoreBord:
         "O": 0b00111111,
         "U": 0b00111110,
         }
-    """ 表示可能文字設定 """
+    """ 表示可能文字辞書 """
 
     _FULLBIT = 0b11111111
     """全セグ点灯"""
 
-    def __init__(self, i2c_ch:int, scl_pin_no:int, sda_pin_no:int, is_debug = False):
+    def __init__(self,
+                 i2c_ch: int,
+                 scl_pin_no: int,
+                 sda_pin_no: int,
+                 is_debug: bool = False):
         """初期化
 
             Args:
                 i2c_ch: I2Cチャネル
                 scl_pin_no: 使用するSCLピン番号
                 sda_pin_no: 使用するSDAピン番号
+                is_debug: デバッグモード(I2C出力無し)
         """
         if is_debug:
             return
         self._i2c = I2C(i2c_ch, scl=Pin(scl_pin_no), sda=Pin(sda_pin_no), freq=100000)
         print("I2C_ADDR:{0}".format(self._i2c.scan()))
 
-    def setEngPin(self, eng_pin_no:int):
+    def set_eng_pin(self, eng_pin_no: int):
         """電圧出力ピン設定(GPIOで代用する場合)"""
         Pin(eng_pin_no, Pin.OUT).on()
 
-    def setI2cAddr(self, addr, is_debug = False):
+    def set_i2c_addr(self, addr: int, is_debug: bool = False):
         """ I2Cスレーブアドレス設定
         
             Args:
                 addr: I2Cスレーブアドレス
+                is_debug: デバッグモード(I2C出力無し)
         """
         self._addr = addr
         if is_debug:
@@ -79,46 +87,51 @@ class ScoreBord:
         self._i2c.writeto_mem(self._addr, 0x21, bytes(0x01)) # システムクロック有効
         self._i2c.writeto_mem(self._addr, 0x81, bytes(0x01)) # ディスプレイON
 
-    def displayOff(self):
+    def display_off(self):
         """ ディスプレイ消灯 """
         self._i2c.writeto_mem(self._addr, 0x80, bytes(0x01)) # ディスプレイOFF
 
-    def outputScore(self, score:int, is_debug = False):
-        """スコア更新"""
+    def output_score(self, score: int, is_debug: bool = False):
+        """スコア更新
+
+            Args:
+                is_debug: デバッグモード(I2C出力無し)
+        """
         self._score = score
         if not self._score_upd_thread_status:
             # スレッド未起動の場合は同期更新
-            self._outputScore(score, is_debug)
+            self._output_score(score, is_debug)
 
-    def _scoreUpdate4thread(self):
+    def _score_update_on_thread(self):
         """スレッド用スコア更新処理
         
             更新を止める場合はself._score_upd_thread_statusをFalseに変更する
         """
         print("Score Update Start")
         while self._score_upd_thread_status:
-            self._outputScore(self._score)
-        self._outputScore(self._score)
+            self._output_score(self._score)
+        self._output_score(self._score)
         print("Score Update Stop")
 
-    def scoreUpdateThreadStart(self):
+    def score_update_thread_start(self):
         """スコア更新スレッド開始"""
         if self._score_upd_thread_status:
             # 多重起動防止
             return
         self._score_upd_thread_status = True
-        self._score_upd_thread = _thread.start_new_thread(self._scoreUpdate4thread, ())
+        self._score_upd_thread = _thread.start_new_thread(self._score_update_on_thread, ())
 
-    def screUpdateThreadStop(self):
+    def scre_update_thread_stop(self):
         """スコア更新スレッド停止"""
         self._score_upd_thread_status = False
         print("Score Update Stop")
 
-    def _outputScore(self, score:int, is_debug = False):
+    def _output_score(self, score: int, is_debug: bool = False):
         """ 点数出力
         
             Args:
                 score: 点数(-999 <= score <= 9999のみ表示可能)
+                is_debug: デバッグモード(I2C出力無し)
         """
         if is_debug:
             return
@@ -143,14 +156,14 @@ class ScoreBord:
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes([self._CHAR[score_digit[2]]]))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes([self._CHAR[score_digit[3]]]))
 
-    def outputFoul(self):
+    def output_foul(self):
         """失敗表示"""
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_1, bytes([self._CHAR["F"]]))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes([self._CHAR["O"]]))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes([self._CHAR["U"]]))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes([self._CHAR["L"]]))
 
-    def displayCheck(self):
+    def display_check(self):
         """全ビット表示確認"""
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_1, bytes(self._FULLBIT))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes(self._FULLBIT))
@@ -165,23 +178,23 @@ class ScoreBord:
 # ==================
 # テストコード
 # ================== 
-def countup(clz:ScoreBord):
+def countup(cls: ScoreBord):
     """ カウントアップ表示確認 """
     print("Count Up Start")
     for cnt in range(10000):
-        clz.outputScore(cnt)
+        cls.output_score(cnt)
         utime.sleep_ms(1)
     print("Count Up End")
 
-def countupByThread(clz:ScoreBord):
+def countup_on_thread(cls: ScoreBord):
     """カウントアップ表示スレッド確認"""
     print("Count Up Thread Start")
-    clz.outputScore(0)
-    clz.scoreUpdateThreadStart()
+    cls.output_score(0)
+    cls.score_update_thread_start()
     for cnt in range(10000):
-        clz.outputScore(cnt)
+        cls.output_score(cnt)
         utime.sleep_ms(1)
-    clz.screUpdateThreadStop()
+    cls.scre_update_thread_stop()
     print("Count Up Thread End")
 
 if __name__  == "__main__":
@@ -189,55 +202,55 @@ if __name__  == "__main__":
     # ==================
     # I2C確認
     # ================== 
-    clz = ScoreBord(0 , 21, 20)
+    cls = ScoreBord(0 , 21, 20)
     #clz.setEngPin(22)
-    i2c_addr_list = clz._i2c.scan()
+    i2c_addr_list = cls._i2c.scan()
     i2c_addr = i2c_addr_list[0]
     print("i2c_addr:{:#x}".format(i2c_addr))
-    clz.setI2cAddr(0x70)
-    print("addr:{:#x}".format(clz._addr))
+    cls.set_i2c_addr(0x70)
+    print("addr:{:#x}".format(cls._addr))
     # ==================
     # 表示確認
     # ==================
-    clz.outputScore(-1000)
+    cls.output_score(-1000)
     utime.sleep(1)
-    clz.outputScore(-999)
+    cls.output_score(-999)
     utime.sleep(1)
-    clz.outputScore(0)
+    cls.output_score(0)
     utime.sleep(1)
-    clz.outputScore(1)
+    cls.output_score(1)
     utime.sleep(1)
     utime.sleep(1)
-    clz.outputScore(0000)
+    cls.output_score(0000)
     utime.sleep(1)
-    clz.outputScore(1111)
+    cls.output_score(1111)
     utime.sleep(1)
-    clz.outputScore(2222)
+    cls.output_score(2222)
     utime.sleep(1)
-    clz.outputScore(3333)
+    cls.output_score(3333)
     utime.sleep(1)
-    clz.outputScore(4444)
+    cls.output_score(4444)
     utime.sleep(1)
-    clz.outputScore(5555)
+    cls.output_score(5555)
     utime.sleep(1)
-    clz.outputScore(6666)
+    cls.output_score(6666)
     utime.sleep(1)
-    clz.outputScore(7777)
+    cls.output_score(7777)
     utime.sleep(1)
-    clz.outputScore(8888)
+    cls.output_score(8888)
     utime.sleep(1)
-    clz.outputScore(9999)
+    cls.output_score(9999)
     utime.sleep(1)
-    clz.outputScore(10000)
+    cls.output_score(10000)
     utime.sleep(1)
-    clz.outputFoul()
+    cls.output_foul()
     utime.sleep(1)
     # ==================
     # カウントアップ確認
     # ==================
-    countup(clz)
+    countup(cls)
     utime.sleep(1)
-    countupByThread(clz)
+    countup_on_thread(cls)
     utime.sleep(1)
-    clz.displayOff()
+    cls.display_off()
     print("test end   ----")

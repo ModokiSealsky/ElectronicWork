@@ -1,11 +1,20 @@
-from machine import Pin
-from PicoLib import Led, InputSwitch
 import utime
+
+from machine import Pin
+
+from PicoLib import Led, InputSwitch
 
 Pin(18, Pin.OUT).on
 
 led_s = [Led(2), Led(4), Led(6), Led(8), Led(10), Led(12)]
-swt_s = [InputSwitch(3), InputSwitch(5), InputSwitch(7), InputSwitch(9), InputSwitch(11) ,InputSwitch(13)]
+swt_s = [
+    InputSwitch(3),
+    InputSwitch(5),
+    InputSwitch(7),
+    InputSwitch(9),
+    InputSwitch(11),
+    InputSwitch(13)
+    ]
 
 start_button = InputSwitch(19)
 
@@ -20,7 +29,7 @@ while testing:
 
     # ボタン状態確認
     for btn_idx in range(6):
-        print("swt{0}:{1}".format(btn_idx, swt_s[btn_idx].isOn()))
+        print("swt{0}:{1}".format(btn_idx, swt_s[btn_idx].is_on()))
 
     # LED消灯
     utime.sleep(1)
@@ -28,7 +37,7 @@ while testing:
     led_idx = (led_idx + 1) %6
 
     # テスト終了チェック
-    if start_button.isOn():
+    if start_button.is_on():
        start_button_count += 1
     else:
         tart_button_count = 0

@@ -1,5 +1,6 @@
 """反応速度を測るゲーム_メイン(待機)ループ"""
 import utime
+
 from PicoLib import Buzzer, InputSwitch, Led, ReflexesGame, ScoreBord
 
 # ピン指定 ---------------------------------------------------------------------
@@ -22,20 +23,16 @@ lights = [Led(pin_no) for pin_no in P_LIGHTS]
 start_btn = InputSwitch(P_START_BTN)
 score_bord = ScoreBord(CH_7SEG_DP, P_7SEG_SCL, P_7SEG_SDA)
 #score_bord.setEngPin(P_7SEG_ENG)
-score_bord.setI2cAddr(ADD_7SEG_D)
-game_logic = ReflexesGame(lights
-                          , [InputSwitch(pin_no) for pin_no in P_BUTTONS]
-                          , Buzzer(P_BUZZER_L)
-                          , Buzzer(P_BUZZER_H)
-                          , score_bord
-                          , Led(P_HIGHSCORE)
-                          , Led(P_GAMEOVER))
+score_bord.set_i2c_addr(ADD_7SEG_D)
+game_logic = ReflexesGame(lights, [InputSwitch(pin_no) for pin_no in P_BUTTONS],
+                          Buzzer(P_BUZZER_L), Buzzer(P_BUZZER_H), score_bord,
+                          Led(P_HIGHSCORE), Led(P_GAMEOVER))
 # ------------------------------------------------------------------------------
 
 # 待機時アニメーション -------------------------------------------------------------------
-lights_idx:int = 0
-lights_len:int = len(lights)
-def waitAnimation(idx:int, _len:int):
+lights_idx: int = 0
+lights_len: int = len(lights)
+def waitAnimation(idx: int, _len: int):
     for light in lights:
         light.off()
     idx = (idx + 1) % _len
@@ -47,12 +44,12 @@ def waitAnimation(idx:int, _len:int):
 start_btn_cnt = 0
 while True:
     lights_idx = waitAnimation(lights_idx, lights_len)
-    if start_btn.isOn():
+    if start_btn.is_on():
         start_btn_cnt += 1
     else:
         start_btn_cnt = 0
     if start_btn_cnt > 2:
         print("ゲームスタート")
-        game_logic.gameStert()
+        game_logic.game_stert()
     utime.sleep_ms(1000)
 # ------------------------------------------------------------------------------
