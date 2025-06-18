@@ -64,6 +64,7 @@ class ReflexesGame:
                 if b.is_on():
                     self._buzzer_l.beep()
                     btn_cnt += 1
+        self._init_display()
 
     def _init_display(self):
         """表示系初期化"""

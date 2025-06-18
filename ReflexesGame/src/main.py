@@ -27,6 +27,7 @@ score_bord.set_i2c_addr(ADD_7SEG_D)
 game_logic = ReflexesGame(lights, [InputSwitch(pin_no) for pin_no in P_BUTTONS],
                           Buzzer(P_BUZZER_L), Buzzer(P_BUZZER_H), score_bord,
                           Led(P_HIGHSCORE), Led(P_GAMEOVER))
+game_logic.parts_check()
 # ------------------------------------------------------------------------------
 
 # 待機時アニメーション -------------------------------------------------------------------
