@@ -126,9 +126,9 @@ class ReflexesGame:
     def _game_finish(self, score:int):
         """ゲーム終了"""
         self._score_bord.scre_update_thread_stop()
-        self._score_bord.output_score(score)
         self._buzzer_l.beep()
         self._buzzer_h.beep()
+        self._score_bord.output_score(score)
         if score > self._high_score:
             self._update_score(score)
 
