@@ -108,7 +108,6 @@ class ReflexesGame:
         utime.sleep_ms(500)
         # 初期化
         self._init_display()
-        self._score_updated = False
         order_list = self.order_shafle(self._ORDER_LIST_SIZE, self._BUTTON_COUNT)
         order_idx = 0
         now_target = order_list[order_idx]
@@ -177,11 +176,6 @@ class ReflexesGame:
         self._buzzer_l.beep(1000)
         self._led_timeup.on()
         self._score_bord.output_foul()
-
-    def getH_hgh_score(self):
-        """現在のハイスコア取得"""
-        return self._high_score
-
 
     def _start_signal(self):
         """ゲーム開始時演出"""
