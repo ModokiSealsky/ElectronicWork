@@ -180,8 +180,8 @@ class ReflexesGame:
 
     def _light_on(self, light_index:int):
         """ライト点灯処理"""
-        self._lightes[light_index].on()
         self._buzzer_l.beep()
+        self._lightes[light_index].on()
 
     def _light_hit(self, light_index:int):
         """ライト消灯処理"""
