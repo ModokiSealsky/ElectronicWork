@@ -151,8 +151,9 @@ class ReflexesGame:
         """ゲーム終了"""
         self._last_score = score
         self._score_bord.scre_update_thread_stop()
-        self._buzzer_l.beep()
-        self._buzzer_h.beep()
+        self._buzzer_l.beep(500)
+        utime.sleep_ms(100)
+        self._buzzer_h.beep(1000)
         self._score_bord.output_score(score)
         if score > self._high_score:
             self._update_score(score)
