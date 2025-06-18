@@ -1,12 +1,20 @@
 import utime
 import random
+import _thread
 
 from PicoLib import Buzzer, InputSwitch, Led, ScoreBord
 
 class ReflexesGame:
     """反応速度を測るゲーム処理クラス"""
-    _high_score = 0
+
+    _high_score = 1
     """ 最高得点 """
+
+    _last_score = 1
+    """ 前回得点 """
+
+    _is_waiting_mode = True
+    """ゲーム開始待ち状態フラグ"""
 
     def __init__(self
                  , lightes: list[Led]
@@ -94,6 +102,10 @@ class ReflexesGame:
     def game_stert(self):
         """ゲーム開始"""
         print("Game Start!")
+        # 待機時アニメーション解除
+        self._is_waiting_mode = False
+        self._buzzer_h.beep(1000)
+        utime.sleep_ms(500)
         # 初期化
         self._init_display()
         self._score_updated = False
@@ -116,6 +128,8 @@ class ReflexesGame:
                 # ゲーム終了判定
                 if order_idx >= self._ORDER_LIST_SIZE:
                     self._game_finish(score)
+                    self._waiting_thread_start()
+                    print("----")
                     return
                 now_target = order_list[order_idx]
                 self._light_on(now_target)
@@ -123,9 +137,12 @@ class ReflexesGame:
             utime.sleep_ms(1)
         # タイムオーバー処理
         self._time_over(order_idx)
+        self._waiting_thread_start()
+        print("----")
 
     def _game_finish(self, score:int):
         """ゲーム終了"""
+        self._last_score = score
         self._score_bord.scre_update_thread_stop()
         self._buzzer_l.beep()
         self._buzzer_h.beep()
@@ -155,6 +172,7 @@ class ReflexesGame:
             order_idx: 現在の表示順(何個目まで進んだかを把握)
         """
         print("Time Over! {0:02}".format(self._ORDER_LIST_SIZE - order_idx))
+        self._last_score = 0
         self._score_bord.scre_update_thread_stop()
         self._buzzer_l.beep(1000)
         self._led_timeup.on()
@@ -191,6 +209,35 @@ class ReflexesGame:
 
     def _isHit(self, btn_idx:int):
         return self._buttons[btn_idx].is_on()
+
+    def _waiting_animation(self):
+        """ゲーム開始待ち中アニメーション"""
+        print("Wait Animation Start.")
+        utime.sleep(5)
+        is_show_highscore = False
+        while self._is_waiting_mode:
+            if is_show_highscore:
+                if self._last_score < 1:
+                    self._score_bord.output_foul()
+                    self._led_timeup.on()
+                else:
+                    self._score_bord._output_score(self._last_score)
+                self._led_highscore.off()
+                is_show_highscore = False
+            else:
+                self._score_bord._output_score(self._high_score)
+                self._led_highscore.on()
+                self._led_timeup.off()
+                is_show_highscore = True
+            utime.sleep(2)
+        self._init_display()
+        print("Wait Animation End.")
+
+    def _waiting_thread_start(self):
+        if self._is_waiting_mode:
+            return
+        self._is_waiting_mode = True
+        self._waiting_thread = _thread.start_new_thread(self._waiting_animation, ())        
 
 # ==================
 # テストコード
