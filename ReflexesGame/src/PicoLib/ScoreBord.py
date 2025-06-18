@@ -38,10 +38,15 @@ class ScoreBord:
         "9": 0b01101111,
         "-": 0b01000000,
         " ": 0b00000000,
+        "_": 0b00001000,
+        "=": 0b01001000,
+        "#": 0b01001001, # 三本横線
+        "!": 0b10000010,
         "A": 0b01110111,
         "C": 0b00111001,
         "E": 0b01111001,
         "F": 0b01110001,
+        "G": 0b00111101,
         "H": 0b01110110,
         "L": 0b00111000,
         "O": 0b00111111,
@@ -155,6 +160,14 @@ class ScoreBord:
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes([self._CHAR[score_digit[1]]]))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes([self._CHAR[score_digit[2]]]))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes([self._CHAR[score_digit[3]]]))
+
+    def output_message(self, message: str):
+        """メッセージ表示"""
+        char_list = list("{:4}".format(message))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_1, bytes([self._CHAR[char_list[0]]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes([self._CHAR[char_list[1]]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes([self._CHAR[char_list[2]]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes([self._CHAR[char_list[3]]]))
 
     def output_foul(self):
         """失敗表示"""
