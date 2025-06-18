@@ -10,8 +10,7 @@
 
 3Dプリンタで出力するパーツ。
 FreeCadで作成したFCStd形式を保管。
-パーツの一覧は[note/3dPrintPartsList.md](note/3dPrintPartsList.md)を参照
-
+パーツの一覧は[note/3dPrintPartsList.md](note/3dPrintPartsList.md)を参照。
 
 ### note
 
@@ -20,3 +19,4 @@ FreeCadで作成したFCStd形式を保管。
 ### src
 
 ラズベリーパイpico用Pythonソース。
+実装したクラスの一覧は[note/src.md](note/src.md)を参照。
