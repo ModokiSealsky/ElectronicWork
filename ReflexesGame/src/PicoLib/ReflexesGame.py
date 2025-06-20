@@ -224,11 +224,11 @@ class ReflexesGame:
                     self._score_bord.output_foul()
                     self._led_timeup.on()
                 else:
-                    self._score_bord._output_score(self._last_score)
+                    self._score_bord.output_score(self._last_score)
                 self._led_highscore.off()
                 is_show_highscore = False
             else:
-                self._score_bord._output_score(self._high_score)
+                self._score_bord.output_score(self._high_score)
                 self._led_highscore.on()
                 self._led_timeup.off()
                 is_show_highscore = True

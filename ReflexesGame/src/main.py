@@ -1,7 +1,7 @@
 """反応速度を測るゲーム_メイン(待機)ループ"""
 import utime
 
-from PicoLib import Buzzer, InputSwitch, Led, ReflexesGame, ScoreBord
+from PicoLib import Buzzer, InputSwitch, Led, ReflexesGame, ScoreBord, ScoreBordDig4Seg7
 
 # ピン指定 ---------------------------------------------------------------------
 P_BUZZER_L  = 17
@@ -31,7 +31,7 @@ else:
 # ゲーム初期化
 lights = [Led(pin_no) for pin_no in P_LIGHTS]
 start_btn = InputSwitch(P_START_BTN)
-score_bord = ScoreBord(CH_7SEG_DP, P_7SEG_SCL, P_7SEG_SDA)
+score_bord = ScoreBordDig4Seg7(CH_7SEG_DP, P_7SEG_SCL, P_7SEG_SDA)
 score_bord.set_i2c_addr(ADD_7SEG_D)
 game_logic = ReflexesGame(lights, [InputSwitch(pin_no) for pin_no in P_BUTTONS],
                           Buzzer(P_BUZZER_L), Buzzer(P_BUZZER_H), score_bord,
