@@ -111,8 +111,7 @@ class ReflexesGame:
         order_list = self.order_shafle(self._ORDER_LIST_SIZE, self._BUTTON_COUNT)
         # 開始処理
         self._start_signal()
-        self._score_bord.output_score(9999)
-        self._score_bord.score_update_thread_start()
+        self._score_bord.counter_start(9999)
         # ゲーム開始
         self._game_roop(order_list)
         # 待機アニメーション開始
@@ -129,7 +128,7 @@ class ReflexesGame:
         now_target = order_list[order_idx]
         self._light_on(now_target)
         while score >= 0:
-            self._score_bord.output_score(score)
+            self._score_bord.counter_update(score)
             # 正解判定
             if self._isHit(now_target):
                 self._light_hit(now_target)
@@ -150,11 +149,11 @@ class ReflexesGame:
     def _game_finish(self, score:int):
         """ゲーム終了"""
         self._last_score = score
-        self._score_bord.scre_update_thread_stop()
         self._buzzer_l.beep(500)
         utime.sleep_ms(100)
         self._buzzer_h.beep(1000)
-        self._score_bord.output_score(score)
+        self._score_bord.counter_stop(score)
+        self._score_bord.output_clear()
         if score > self._high_score:
             self._update_score(score)
 
@@ -181,7 +180,7 @@ class ReflexesGame:
         """
         print("Time Over! {0:02}".format(self._ORDER_LIST_SIZE - order_idx))
         self._last_score = 0
-        self._score_bord.scre_update_thread_stop()
+        self._score_bord.counter_stop(0)
         self._buzzer_l.beep(1000)
         self._led_timeup.on()
         self._score_bord.output_foul()
@@ -224,11 +223,11 @@ class ReflexesGame:
                     self._score_bord.output_foul()
                     self._led_timeup.on()
                 else:
-                    self._score_bord.output_score(self._last_score)
+                    self._score_bord.output_count(self._last_score)
                 self._led_highscore.off()
                 is_show_highscore = False
             else:
-                self._score_bord.output_score(self._high_score)
+                self._score_bord.output_count(self._high_score)
                 self._led_highscore.on()
                 self._led_timeup.off()
                 is_show_highscore = True

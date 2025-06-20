@@ -1,8 +1,3 @@
-import utime
-import  _thread
-
-from machine import Pin, I2C
-
 class ScoreBord:
     """I2Cを利用するスコアボードのインターフェース"""
     def __init__(self,
@@ -30,30 +25,50 @@ class ScoreBord:
         """ ディスプレイ消灯 """
         print("Display Off")
 
-    def output_score(self, score: int):
-        """スコア更新
+    def display_check(self):
+        """表示確認"""
+        print("Display Check")
 
-            Args:
-                score: 現在の点数
+    def counter_start(self, start_count:int):
+        """カウンター更新開始
+
+        Args:
+            start_count: ゲーム開始時カウント値
         """
-        print("score:{0}".format(score))
+        print("start_count]{0}".format(start_count))
 
-    def score_update_thread_start(self):
-        """スコア更新スレッド開始"""
-        print("Score Update Start")
+    def counter_update(self, now_count: int):
+        """カウンター値更新
 
-    def scre_update_thread_stop(self):
-        """スコア更新スレッド停止"""
-        print("Score Update Stop")
+        Args:
+            start_count: 現在のカウント値
+        """
+        print("now_count]{0}".format(now_count))
 
-    def output_message(self, message: str):
-        """メッセージ表示"""
-        print("message:{0}".format(message))
+    def counter_stop(self, result_count:int):
+        """カウンター更新停止
+
+        Args:
+            result_count: ゲーム終了時カウント値
+        """
+        print("result_count]{0}".format(result_count))
+
+    def output_count(self, count:int):
+        """ゲームクリア表示"""
+        print("output_count]{0}".format(count))
+
+    def output_clear(self):
+        """ゲームクリア表示"""
+        print("CLEAR!!")
 
     def output_foul(self):
-        """失敗表示"""
+        """ゲーム失敗表示"""
         print("FOUL!!")
 
-    def display_check(self):
-        """全ビット表示確認"""
-        print("Display Check")
+    def output_message(self, message: str):
+        """メッセージ表示
+        
+        Args:
+            message: 表示メッセージ
+        """
+        print("message:{0}".format(message))
