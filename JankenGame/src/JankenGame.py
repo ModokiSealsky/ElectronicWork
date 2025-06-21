@@ -53,7 +53,7 @@ class JankenGame:
         ]
         self._voice = voice
 
-    def _getPlayerHand(self, wait_ms:int = 1000):
+    def _get_player_hand(self, wait_ms:int = 1000):
         """プレイヤーの手を取得する"""
         clock = 0
         while clock < wait_ms:
@@ -66,11 +66,11 @@ class JankenGame:
             utime.sleep_ms(1)
         return self._NONE
 
-    def _getCpuHand(self):
+    def _get_Cpu_hand(self):
         """コンピューターの手をランダムで決定する"""
         return random.randint(0, 2)
 
-    def _getCpuWinHand(self, player_value:int):
+    def _get_cpu_win_hand(self, player_value:int):
         """コンピューターが勝つ手を取得する"""
         if player_value == self._PLY_GU:
             return self._CPU_PA
@@ -79,7 +79,7 @@ class JankenGame:
         else:
             return self._CPU_CH
 
-    def _getCpuLoseHand(self, player_value:int):
+    def _get_cpu_lose_hand(self, player_value:int):
         """コンピューターが負ける手を取得する"""
         if player_value == self._PLY_GU:
             return self._CPU_PA
@@ -88,7 +88,7 @@ class JankenGame:
         else:
             return self._CPU_GU
 
-    def _checkPlayerVWin(self, player_value:int, cpu_value:int):
+    def _check_player_win(self, player_value:int, cpu_value:int):
         """プレイヤー勝利判定
 
         * 0:あいこ
@@ -97,92 +97,92 @@ class JankenGame:
         """
         return (player_value - cpu_value) % 3
 
-    def _showCpuHand(self, cpu_value:int):
+    def _show_cpu_hand(self, cpu_value:int):
         """CPUの手を表示する"""
         self._cpu_leds[cpu_value].on()
 
-    def _hiddenCpuHand(self):
+    def _hidden_cpu_hand(self):
         """CPUの手を非表示にする"""
         self._cpu_leds[self._CPU_GU].off()
         self._cpu_leds[self._CPU_CH].off()
         self._cpu_leds[self._CPU_PA].off()
 
-    def _gameNormal(self, victory_count = 0):
+    def _game_normal(self, victory_count = 0):
         """ゲーム(通常モード)"""
         cpu_val = self._NONE
         ply_val = self._NONE
         while(victory_count < 9):
-            cpu_val = self._getCpuHand()
-            self._voice.callJan()
-            ply_val = self._getPlayerHand()
+            cpu_val = self._get_Cpu_hand()
+            self._voice.call_jan()
+            ply_val = self._get_player_hand()
             if ply_val == self._NONE:
-                self._voice.callKen()
-                ply_val = self._getPlayerHand()
+                self._voice.call_ken()
+                ply_val = self._get_player_hand()
             if ply_val == self._NONE:
-                ply_val = self._getPlayerHand(200)
+                ply_val = self._get_player_hand(200)
             if ply_val == self._NONE:
-                self._voice.callTimeUp()
+                self._voice.call_timeUp()
                 return victory_count
-            self._voice.callPon()
-            self._showCpuHand(cpu_val)
-            chk_val = self._checkPlayerVWin(ply_val, cpu_val)
+            self._voice.call_pon()
+            self._show_cpu_hand(cpu_val)
+            chk_val = self._check_player_win(ply_val, cpu_val)
             if chk_val == self._LOSE:
-                self._voice.callLose()
+                self._voice.call_lose()
                 return victory_count
             elif chk_val == self._DROW:
-                self._voice.callDraw()
+                self._voice.call_draw()
             else:
-                self._voice.callWin()
+                self._voice.call_win()
                 victory_count += 1
         # 9勝達成
-        self._voice.callVictory()
+        self._voice.call_victory()
         return victory_count
 
-    def _gameEntertainment(self):
+    def _game_entertainment(self):
         """ゲーム(接待モード)"""
         victory_count = 0
         while(victory_count < 5):
-            self._voice.callJan()
-            ply_val = self._getPlayerHand()
+            self._voice.call_jan()
+            ply_val = self._get_player_hand()
             if ply_val == self._NONE:
-                self._voice.callKen()
-                ply_val = self._getPlayerHand()
+                self._voice.call_ken()
+                ply_val = self._get_player_hand()
             if ply_val == self._NONE:
-                ply_val = self._getPlayerHand(200)
+                ply_val = self._get_player_hand(200)
             if ply_val == self._NONE:
-                self._voice.callTimeUp()
+                self._voice.call_timeUp()
                 return victory_count
-            self._voice.callPon()
-            self._showCpuHand(self._getCpuLoseHand(ply_val))
-            self._voice.callWin()
+            self._voice.call_pon()
+            self._show_cpu_hand(self._get_cpu_lose_hand(ply_val))
+            self._voice.call_win()
             victory_count += 1
-        return self._gameNormal(victory_count)
+        return self._game_normal(victory_count)
 
-    def _gameKichiku(self):
+    def _game_kichiku(self):
         """ゲーム(鬼畜モード)"""
-        self._voice.callJan()
-        ply_val = self._getPlayerHand()
+        self._voice.call_jan()
+        ply_val = self._get_player_hand()
         if ply_val == self._NONE:
-            self._voice.callKen()
-            ply_val = self._getPlayerHand()
+            self._voice.call_ken()
+            ply_val = self._get_player_hand()
         if ply_val == self._NONE:
-            ply_val = self._getPlayerHand(200)
+            ply_val = self._get_player_hand(200)
         if ply_val == self._NONE:
-            self._voice.callTimeUp()
+            self._voice.call_timeUp()
             return 0
-        self._voice.callPon()
-        self._showCpuHand(self._getCpuWinHand(ply_val))
-        self._voice.callLose()
+        self._voice.call_pon()
+        self._show_cpu_hand(self._get_cpu_win_hand(ply_val))
+        self._voice.call_lose()
         return 0
 
-    def gameStart(self, mode:int):
+    def game_start(self, mode:int):
         """ゲーム開始"""
         if mode == self.MODE_ENTERTAINMENT:
-            self._gameEntertainment()
+            self._game_entertainment()
         elif mode == self.MODE_KICHIKU:
-            self._gameKichiku()
+            self._game_kichiku()
         else:
-            self._gameNormal()
+            self._game_normal()
 
 # ==================
 # テストコード
