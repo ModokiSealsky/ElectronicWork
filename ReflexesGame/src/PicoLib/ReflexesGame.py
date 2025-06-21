@@ -142,7 +142,7 @@ class ReflexesGame:
                 now_target = order_list[order_idx]
                 self._light_on(now_target)
             score -= 1
-            utime.sleep_ms(1)
+            utime.sleep_us(800)
         # タイムオーバー処理
         self._time_over(order_idx)
 
