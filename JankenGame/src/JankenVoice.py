@@ -1,3 +1,7 @@
+from enum import Enum
+
+class JankenVoiceModule(Enum):
+    DFP = 1
 
 class JankenVoice:
     """音声再生インターフェース"""
@@ -52,6 +56,12 @@ class JankenVoice:
     def call_pa(self):
         """パー"""
         print("パー")
+
+    @classmethod
+    def getInstance(cls, module_type: JankenVoiceModule):
+        if type == JankenVoiceModule.DFP:
+            print("")
+
 
 
 # ==================
