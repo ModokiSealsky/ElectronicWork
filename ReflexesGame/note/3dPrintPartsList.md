@@ -28,10 +28,11 @@
 |12|EneSwitchPanelSleeve.FCStd|1|電源、リセット、モード切替スイッチカバー|裏側から差し込む|
 |13|EneSwitchPanelBack.FCStd|1|電源、リセット、モード切替スイッチ保持|裏側から差し込む|
 |14|ResetButtonHolder.FCStd|1|リセットボタン固定|EneSwitchPanelBackにネジ止め|
+|15|SideWarlHoldWasher.FCStd|8|側面パネル固定部品の高さ調整|側面にプラパーツを仕込んだ分の隙間を埋める|
 
-|01|02|03|04|05|06|07|08|09|10|11|12|13|14|
-|--|--|--|--|--|--|--|--|--|--|--|--|--|--|
-|![ButtonSleeve](image_3dparts/ButtonSleeve.png)|![LedSleeve](image_3dparts/LedSleeve.png)|![BackPanelSpacer](image_3dparts/BackPanelSpacer.png)|![LedSleeveHolder](image_3dparts\LedSleeveHolder.png)|![LedBinder](image_3dparts\LedBinder.png)|![SidWalHolder](image_3dparts\SidWalHolder.png)|![SupportPiller](image_3dparts\SupportPiller.png)|![SwitchHoldPiller](image_3dparts\SwitchHoldPiller.png)|![SwitchHoldPillerBinder](image_3dparts\SwitchHoldPillerBinder.png)|![PwerSwitchShaft](image_3dparts\PwerSwitchShaft.png)|![EneSwitchPanelFace](image_3dparts\EneSwitchPanelFace.png)|![EneSwitchPanelSleeve](image_3dparts\EneSwitchPanelSleeve.png)|![EneSwitchPanelBack](image_3dparts\EneSwitchPanelBack.png)|![ResetButtonHolder](image_3dparts\ResetButtonHolder.png)|
+|01|02|03|04|05|06|07|08|09|10|11|12|13|14|15|
+|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|
+|![ButtonSleeve](image_3dparts/ButtonSleeve.png)|![LedSleeve](image_3dparts/LedSleeve.png)|![BackPanelSpacer](image_3dparts/BackPanelSpacer.png)|![LedSleeveHolder](image_3dparts\LedSleeveHolder.png)|![LedBinder](image_3dparts\LedBinder.png)|![SidWalHolder](image_3dparts\SidWalHolder.png)|![SupportPiller](image_3dparts\SupportPiller.png)|![SwitchHoldPiller](image_3dparts\SwitchHoldPiller.png)|![SwitchHoldPillerBinder](image_3dparts\SwitchHoldPillerBinder.png)|![PwerSwitchShaft](image_3dparts\PwerSwitchShaft.png)|![EneSwitchPanelFace](image_3dparts\EneSwitchPanelFace.png)|![EneSwitchPanelSleeve](image_3dparts\EneSwitchPanelSleeve.png)|![EneSwitchPanelBack](image_3dparts\EneSwitchPanelBack.png)|![ResetButtonHolder](image_3dparts\ResetButtonHolder.png)|![SideWarlHoldWasher](image_3dparts\SideWarlHoldWasher.png)|
 
 ---
 
@@ -91,7 +92,9 @@
 |05|BatteryPanelOpenerUpperFrame.FCStd|1|電池ボックス開閉蓋の上枠||
 |06|BatteryPanelOpenerLowwerFrame.FCStd|1|電池ボックス開閉蓋の下枠||
 |07|BatteryHolderHood.FCStd|1|電池ボックス開閉蓋|凹みがある方が内側|
+|08|BandHolder.FCStd|4|蓋固定ゴムバンド取り付けフレーム|プラバンを両側から挟む|
+|09|BandHolderBinder.FCStd|2|BandHolderの浮き上がり防止|BandHolder2枚を内側に差し込む|
 
-|01|02|03|04|05|06|07|
-|--|--|--|--|--|--|--|
-|![BatteryHolder](image_3dparts\BatteryHolder.png)|![BatteryHolderBridge](image_3dparts\BatteryHolderBridge.png)|![BatteryHolderBridgeBainder](image_3dparts\BatteryHolderBridgeBainder.png)|![BatteryPanelOpenerFrame](image_3dparts\BatteryPanelOpenerFrame.png)|![BatteryPanelOpenerUpperFrame](image_3dparts\BatteryPanelOpenerUpperFrame.png)|![BatteryPanelOpenerLowwerFrame](image_3dparts\BatteryPanelOpenerLowwerFrame.png)|![BatteryHolderHood](image_3dparts\BatteryHolderHood.png)|
+|01|02|03|04|05|06|07|08|09|
+|--|--|--|--|--|--|--|--|--|
+|![BatteryHolder](image_3dparts\BatteryHolder.png)|![BatteryHolderBridge](image_3dparts\BatteryHolderBridge.png)|![BatteryHolderBridgeBainder](image_3dparts\BatteryHolderBridgeBainder.png)|![BatteryPanelOpenerFrame](image_3dparts\BatteryPanelOpenerFrame.png)|![BatteryPanelOpenerUpperFrame](image_3dparts\BatteryPanelOpenerUpperFrame.png)|![BatteryPanelOpenerLowwerFrame](image_3dparts\BatteryPanelOpenerLowwerFrame.png)|![BatteryHolderHood](image_3dparts\BatteryHolderHood.png)|![BandHolder](image_3dparts\BandHolder.png)|![BandHolderBinder](image_3dparts\BandHolderBinder.png)|
