@@ -3,7 +3,9 @@ import random, utime
 from micropython import const
 from machine import Pin
 
-from JankenVoice import JankenVoice
+from picolib import InputSwitch, Led
+from JankenGame.JankenScreen import JankenScreen
+from JankenGame.JankenVoice import JankenVoice
 
 class JankenGameMode:
     """じゃんけんゲーム難易度"""
@@ -51,32 +53,31 @@ class JankenGame:
     _high_score = 0
     """最高得点"""
 
-    def __init__(self, ply_gu_pin: int,
-                 ply_ch_pin: int,
-                 ply_pa_pin: int,
-                 led_gu_pin: int,
-                 led_ch_pin: int,
-                 led_pa_pin: int,
+    def __init__(self,
+                 janken_screen: JankenScreen,
+                 led_ply_gu: Led, led_ply_ch: Led, led_ply_pa: Led,
+                 btn_gu: InputSwitch,
+                 btn_ch: InputSwitch,
+                 btn_pa: InputSwitch,
                  voice: JankenVoice):
-        self._ply_gu_btn = Pin(ply_gu_pin, Pin.IN)
-        self._ply_ch_btn = Pin(ply_ch_pin, Pin.IN)
-        self._ply_pa_btn = Pin(ply_pa_pin, Pin.IN)
-        self._cpu_leds = [
-            Pin(led_gu_pin, Pin.OUT, Pin.PULL_UP),
-            Pin(led_ch_pin, Pin.OUT, Pin.PULL_UP),
-            Pin(led_pa_pin, Pin.OUT, Pin.PULL_UP)
-        ]
+        self._screen = janken_screen
+        self._led_ply_gu = led_ply_gu
+        self._led_ply_ch = led_ply_ch
+        self._led_ply_pa = led_ply_pa
+        self._ply_gu_btn = btn_gu
+        self._ply_ch_btn = btn_ch
+        self._ply_pa_btn = btn_pa
         self._voice = voice
 
     def _get_player_hand(self, wait_ms: int = 1000) -> int:
         """プレイヤーの手を取得する"""
         clock = 0
         while clock < wait_ms:
-            if self._ply_gu_btn.value == 1:
+            if self._ply_gu_btn.is_on():
                 return JankenGame.Hand.PLY_GU
-            if self._ply_ch_btn.value == 1:
+            if self._ply_ch_btn.is_on():
                 return JankenGame.Hand.PLY_CH
-            if self._ply_pa_btn.value == 1:
+            if self._ply_pa_btn.is_on():
                 return JankenGame.Hand.PLY_PA
             utime.sleep_ms(1)
         return JankenGame.Hand.PLY_NO
@@ -114,13 +115,16 @@ class JankenGame:
 
     def _show_cpu_hand(self, cpu_value:int) -> None:
         """CPUの手を表示する"""
-        self._cpu_leds[cpu_value].on()
+        if cpu_value == JankenGame.Hand.CPU_GU:
+            self._screen.show_gu()
+        elif cpu_value == JankenGame.Hand.CPU_CH:
+            self._screen.show_ch()
+        else:
+            self._screen.show_pa()
 
     def _hidden_cpu_hand(self) -> None:
         """CPUの手を非表示にする"""
-        self._cpu_leds[JankenGame.Hand.CPU_GU].off()
-        self._cpu_leds[JankenGame.Hand.CPU_CH].off()
-        self._cpu_leds[JankenGame.Hand.CPU_PA].off()
+        self._screen.hand_off()
 
     def _game_normal(self, victory_count = 0) -> int:
         """ゲーム(通常モード)"""
@@ -204,6 +208,31 @@ class JankenGame:
 # ================== 
 if __name__  == "__main__":
     print("test start -----")
+    # スクリーンの手用LED
+    led_gu = Led(2)
+    led_ch = Led(3)
+    led_pa = Led(4)
+    led_g_c = Led(5)
+    led_c_p = Led(6)
+    # 結果表示用LED
+    led_w = Led(7)
+    led_d = Led(8)
+    led_l = Led(9)
+    # スクリーン初期化
+    screen = JankenScreen([led_gu, led_g_c],
+                       [led_ch, led_g_c, led_c_p],
+                       [led_pa, led_c_p],
+                       led_w, led_d, led_l)
+    # プレイヤーの手用LED
+    led_p_gu = Led(10)
+    led_p_ch = Led(11)
+    led_p_pa = Led(12)
+    btn_gu = InputSwitch(18)
+    btn_ch = InputSwitch(19)
+    btn_pa = InputSwitch(20)
+
     voice = JankenVoice()
-    clz = JankenGame(0, 1, 2, 3, 4, 5, voice)
+    clz = JankenGame(screen, led_p_gu, led_p_ch, led_p_pa,
+                     btn_gu, btn_ch, btn_pa,
+                     voice)
     print("test end   -----")
