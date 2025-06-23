@@ -1,8 +1,9 @@
-from machine import Pin
-from .JankenVoice import JankenVoice
 import random, utime
 
 from micropython import const
+from machine import Pin
+
+from JankenVoice import JankenVoice
 
 class JankenGameMode:
     """じゃんけんゲーム難易度"""
@@ -50,7 +51,13 @@ class JankenGame:
     _high_score = 0
     """最高得点"""
 
-    def __init__(self, ply_gu_pin:int, ply_ch_pin:int, ply_pa_pin:int, led_gu_pin:int, led_ch_pin:int, led_pa_pin:int, voice:JankenVoice):
+    def __init__(self, ply_gu_pin: int,
+                 ply_ch_pin: int,
+                 ply_pa_pin: int,
+                 led_gu_pin: int,
+                 led_ch_pin: int,
+                 led_pa_pin: int,
+                 voice: JankenVoice):
         self._ply_gu_btn = Pin(ply_gu_pin, Pin.IN)
         self._ply_ch_btn = Pin(ply_ch_pin, Pin.IN)
         self._ply_pa_btn = Pin(ply_pa_pin, Pin.IN)
@@ -61,7 +68,7 @@ class JankenGame:
         ]
         self._voice = voice
 
-    def _get_player_hand(self, wait_ms:int = 1000):
+    def _get_player_hand(self, wait_ms: int = 1000) -> int:
         """プレイヤーの手を取得する"""
         clock = 0
         while clock < wait_ms:
@@ -78,7 +85,7 @@ class JankenGame:
         """コンピューターの手をランダムで決定する"""
         return random.randint(0, 2)
 
-    def _get_cpu_win_hand(self, player_value:int):
+    def _get_cpu_win_hand(self, player_value: int) -> int:
         """コンピューターが勝つ手を取得する"""
         if player_value == JankenGame.Hand.PLY_GU:
             return JankenGame.Hand.CPU_PA
@@ -87,7 +94,7 @@ class JankenGame:
         else:
             return JankenGame.Hand.CPU_CH
 
-    def _get_cpu_lose_hand(self, player_value:int):
+    def _get_cpu_lose_hand(self, player_value: int) -> int:
         """コンピューターが負ける手を取得する"""
         if player_value == JankenGame.Hand.PLY_GU:
             return JankenGame.Hand.CPU_CH
@@ -96,7 +103,7 @@ class JankenGame:
         else:
             return JankenGame.Hand.CPU_GU
 
-    def _check_player_win(self, player_value:int, cpu_value:int) -> int:
+    def _check_player_win(self, player_value: int, cpu_value: int) -> int:
         """プレイヤー勝利判定
 
         * 0:あいこ
@@ -115,7 +122,7 @@ class JankenGame:
         self._cpu_leds[JankenGame.Hand.CPU_CH].off()
         self._cpu_leds[JankenGame.Hand.CPU_PA].off()
 
-    def _game_normal(self, victory_count = 0):
+    def _game_normal(self, victory_count = 0) -> int:
         """ゲーム(通常モード)"""
         cpu_val = JankenGame.Hand.PLY_NO
         ply_val = JankenGame.Hand.PLY_NO
@@ -146,7 +153,7 @@ class JankenGame:
         self._voice.call_victory()
         return victory_count
 
-    def _game_entertainment(self):
+    def _game_entertainment(self) -> int:
         """ゲーム(接待モード)"""
         victory_count = 0
         while(victory_count < 5):
@@ -166,7 +173,7 @@ class JankenGame:
             victory_count += 1
         return self._game_normal(victory_count)
 
-    def _game_kichiku(self):
+    def _game_kichiku(self) -> int:
         """ゲーム(鬼畜モード)"""
         self._voice.call_jan()
         ply_val = self._get_player_hand()
@@ -183,7 +190,7 @@ class JankenGame:
         self._voice.call_lose()
         return 0
 
-    def game_start(self, janken_game_mode: JankenGameMode):
+    def game_start(self, janken_game_mode: JankenGameMode) -> None:
         """ゲーム開始"""
         if janken_game_mode == JankenGameMode.ENTERTAINMENT:
             self._game_entertainment()
