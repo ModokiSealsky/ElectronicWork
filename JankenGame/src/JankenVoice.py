@@ -1,7 +1,7 @@
-from enum import Enum
+from micropython import const
 
-class JankenVoiceModule(Enum):
-    DFP = 1
+class JankenVoiceModule:
+    DFP: int = const(1)
 
 class JankenVoice:
     """音声再生インターフェース"""

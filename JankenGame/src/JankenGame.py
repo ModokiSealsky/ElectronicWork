@@ -2,14 +2,15 @@ from machine import Pin
 from .JankenVoice import JankenVoice
 import random, utime
 
-from enum import Enum
+from micropython import const
 
-class JankenGameMode(Enum):
+class JankenGameMode:
     """じゃんけんゲーム難易度"""
-    NORMAL = 0
-    ENTERTAINMENT = 1
+    NORMAL: int = const(0)
+    """通常"""
+    ENTERTAINMENT: int = const(1)
     """接待(必ず5勝できる)"""
-    KICHIKU = 2
+    KICHIKU = const(2)
     """鬼畜(必ず負ける)"""
 
 class JankenGame:
