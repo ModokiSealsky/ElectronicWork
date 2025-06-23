@@ -2,6 +2,16 @@ from machine import Pin
 from .JankenVoice import JankenVoice
 import random, utime
 
+from enum import Enum
+
+class JankenGameMode(Enum):
+    """じゃんけんゲーム難易度"""
+    NORMAL = 0
+    ENTERTAINMENT = 1
+    """接待(必ず5勝できる)"""
+    KICHIKU = 2
+    """鬼畜(必ず負ける)"""
+
 class JankenGame:
     """じゃんけんゲームクラス
     
@@ -30,11 +40,6 @@ class JankenGame:
     _DROW = 0
     _LOSE = 1
     _WIN =2
-
-    MODE_ENTERTAINMENT = 1
-    """モード:接待"""
-    MODE_KICHIKU = 2
-    """モード:鬼畜"""
 
     _victory_count = 0
     """連勝数"""
@@ -175,11 +180,11 @@ class JankenGame:
         self._voice.call_lose()
         return 0
 
-    def game_start(self, mode:int):
+    def game_start(self, janken_game_mode: JankenGameMode):
         """ゲーム開始"""
-        if mode == self.MODE_ENTERTAINMENT:
+        if janken_game_mode == JankenGameMode.ENTERTAINMENT:
             self._game_entertainment()
-        elif mode == self.MODE_KICHIKU:
+        elif janken_game_mode == JankenGameMode.KICHIKU:
             self._game_kichiku()
         else:
             self._game_normal()
