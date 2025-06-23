@@ -4,9 +4,9 @@ from micropython import const
 from machine import Pin
 
 from picolib import InputSwitch, Led
-from JankenGame.JankenInfo import JankenInfo
-from JankenGame.JankenScreen import JankenScreen
-from JankenGame.JankenVoice import JankenVoice
+from .JankenInfo import JankenInfo
+from .JankenScreen import JankenScreen
+from .JankenVoice import JankenVoice
 
 class JankenGameMode:
     """じゃんけんゲーム難易度"""
@@ -16,6 +16,8 @@ class JankenGameMode:
     """接待(必ず5勝できる)"""
     KICHIKU = const(2)
     """鬼畜(必ず負ける)"""
+    FIRST_GU: int = const(3)
+    """最初はグー(ランダム要素あり)"""
 
 class JankenGame:
     """じゃんけんゲームクラス
@@ -197,7 +199,7 @@ class JankenGame:
         self._voice.call_lose()
         return 0
 
-    def game_start(self, janken_game_mode: JankenGameMode) -> None:
+    def game_start(self, janken_game_mode: int) -> None:
         """ゲーム開始"""
         if janken_game_mode == JankenGameMode.ENTERTAINMENT:
             self._game_entertainment()

@@ -3,7 +3,7 @@ import utime
 from micropython import const
 
 from picolib import Buzzer, InputSwitch, Led
-from JankenGame import JankenGame, JankenInfo, JankenScreen, JankenVoice
+from jankengame import JankenGame, JankenGameMode,JankenInfo, JankenScreen, JankenVoice
 
 # ピン指定 ---------------------------------------------------------------------
 P_LED_CPU_GU = const(2)
@@ -23,8 +23,13 @@ P_LED_PLY_PA = const(13)
 P_BTN_GU = const(18)
 P_BTN_CH = const(19)
 P_BTN_PA = const(20)
+# ------------------------------
 P_BTN_ST = const(21)
-P_BUZZER = const(16)
+P_MODE_A = const(16)
+P_MODE_B = const(17)
+# ------------------------------
+P_BUZZER_L = const(26)
+P_BUZZER_H = const(27)
 # ------------------------------
 P_I2C_0_SDA = const(0)
 P_I2C_0_SCL = const(1)
@@ -77,9 +82,20 @@ game_logic = JankenGame(
 )
 
 # ------------------------------------------------------------------------------
+mode_a = InputSwitch(P_MODE_A)
+mode_b = InputSwitch(P_MODE_B)
+btn_start = InputSwitch(P_BTN_ST)
+def get_game_mode() -> int:
+    """ゲームモード取得"""
+    if mode_a.is_on() and mode_b.is_on():
+        return JankenGameMode.ENTERTAINMENT
+    if mode_a.is_on():
+        return JankenGameMode.KICHIKU
+    if mode_b.is_on():
+        return JankenGameMode.FIRST_GU
+    return JankenGameMode.NORMAL
 
 # ゲーム開始待ちループ -----------------------------------------------------------
-btn_start = InputSwitch(P_BTN_ST)
 start_btn_cnt: int = 0
 while True:
     if btn_start.is_on():
@@ -87,5 +103,6 @@ while True:
     else:
         start_btn_cnt = 0
     if start_btn_cnt > 1:
+        game_logic.game_start(get_game_mode())
         start_btn_cnt = 0
 # ------------------------------------------------------------------------------
