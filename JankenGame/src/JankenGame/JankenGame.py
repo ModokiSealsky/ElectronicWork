@@ -4,6 +4,7 @@ from micropython import const
 from machine import Pin
 
 from picolib import InputSwitch, Led
+from JankenGame.JankenInfo import JankenInfo
 from JankenGame.JankenScreen import JankenScreen
 from JankenGame.JankenVoice import JankenVoice
 
@@ -59,7 +60,8 @@ class JankenGame:
                  btn_gu: InputSwitch,
                  btn_ch: InputSwitch,
                  btn_pa: InputSwitch,
-                 voice: JankenVoice):
+                 voice: JankenVoice,
+                 info: JankenInfo):
         self._screen = janken_screen
         self._led_ply_gu = led_ply_gu
         self._led_ply_ch = led_ply_ch
@@ -68,6 +70,7 @@ class JankenGame:
         self._ply_ch_btn = btn_ch
         self._ply_pa_btn = btn_pa
         self._voice = voice
+        self._info = info
 
     def _get_player_hand(self, wait_ms: int = 1000) -> int:
         """プレイヤーの手を取得する"""
@@ -232,7 +235,8 @@ if __name__  == "__main__":
     btn_pa = InputSwitch(20)
 
     voice = JankenVoice()
+    info = JankenInfo()
     clz = JankenGame(screen, led_p_gu, led_p_ch, led_p_pa,
                      btn_gu, btn_ch, btn_pa,
-                     voice)
+                     voice, info)
     print("test end   -----")
