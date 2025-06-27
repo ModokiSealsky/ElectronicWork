@@ -5,19 +5,9 @@ from machine import Pin
 
 from picolib import InputSwitch, Led
 from .JankenInfo import JankenInfo
+from .JankenGameMode import JankenGameMode
 from .JankenScreen import JankenScreen
 from .JankenVoice import JankenVoice
-
-class JankenGameMode:
-    """じゃんけんゲーム難易度"""
-    NORMAL: int = const(0)
-    """通常"""
-    ENTERTAINMENT: int = const(1)
-    """接待(必ず5勝できる)"""
-    KICHIKU = const(2)
-    """鬼畜(必ず負ける)"""
-    FIRST_GU: int = const(3)
-    """最初はグー(ランダム要素あり)"""
 
 class JankenGame:
     """じゃんけんゲームクラス
