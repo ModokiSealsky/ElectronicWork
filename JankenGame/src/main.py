@@ -6,12 +6,12 @@ from picolib import Buzzer, InputSwitch, Led
 from jankengame import JankenGame, JankenGameMode,JankenInfo, JankenScreen, JankenVoice
 
 # ピン指定 ---------------------------------------------------------------------
-P_LED_CPU_GU = const(2)
-P_LED_CPU_CH = const(3)
-P_LED_CPU_PA = const(4)
-P_LED_CPU_AL = const(5)
-P_LED_CPU_GC = const(6)
-P_LED_CPU_CP = const(7)
+P_LED_CPU_GU = const(2) # 青 + 白 + 黄
+P_LED_CPU_CH = const(3) # 黄 + 白 + 緑
+P_LED_CPU_PA = const(4) # 赤 + 白 + 緑
+P_LED_CPU_AL = const(5) # 白
+P_LED_CPU_GC = const(6) # 黄
+P_LED_CPU_CP = const(7) # 緑
 P_LED_WIN = const(8)
 P_LED_DROW = const(9)
 P_LED_LOSE = const(10)
