@@ -117,19 +117,19 @@ if __name__  == "__main__":
     print("test start -----")
     WAIT_SEC = 2
     # じゃんけんの手用LED
-    led_gu = Led(0)
-    led_ch = Led(1)
-    led_pa = Led(2)
-    led_g_c = Led(3)
-    led_c_p = Led(4)
+    led_al = Led(2) # 白
+    led_gu = Led(3) # 水
+    led_cp = Led(4) # 緑
+    led_pa = Led(5) # 赤
+    led_gc = Led(6) # 黄
     # 結果表示用LED
-    led_w = Led(5)
-    led_d = Led(6)
-    led_l = Led(7)
+    led_w = Led(7) # 水
+    led_d = Led(8) # 黄
+    led_l = Led(9) # 赤
     # スクリーン初期化
-    cls = JankenScreen([led_gu, led_g_c],
-                       [led_ch, led_g_c, led_c_p],
-                       [led_pa, led_c_p],
+    cls = JankenScreen([led_al, led_gu, led_gc],
+                       [led_al, led_gc, led_cp],
+                       [led_al, led_pa, led_cp],
                        led_w, led_d, led_l)
     # 各種表示確認
     print("win")
