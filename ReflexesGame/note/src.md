@@ -2,7 +2,46 @@
 
 ## クラス図
 
-@import "picolib_class.puml"
+```mermaid
+classDiagram
+
+namespace picolib {
+
+    class Buzzer {
+        __init__(pin_no: int)
+        beep(ms: int=100)
+    }
+
+    class InputSwitch{
+        __init__(pin_no: int)
+        is_on()  bool
+        is_off()  bool
+    }
+
+    class Led{
+        __init__(pin_no: int)
+        on()
+        off()
+    }
+}
+
+namespace reflexesgame {
+    class ScoreBord{
+        __init__(i2c_ch: int, scl_pin_no: int, sda_pin_no: int)
+        set_eng_pin(pin_no: int) 
+        set_i2c_addr(addr: int)
+        display_off()
+        output_score(score: int)
+    }
+
+    class ReflexesGame{
+        __init__(lightes: list(Led), buttons: list(InputSwitch), buzzer_l: Buzzer, buzzer_h: Buzzer, score_bord: ScoreBord, led_highscore: Led, led_timeup: Led, order_size: int=10)
+        parts_check()
+        game_stert()
+    }
+}
+
+```
 
 ## 概要
 
