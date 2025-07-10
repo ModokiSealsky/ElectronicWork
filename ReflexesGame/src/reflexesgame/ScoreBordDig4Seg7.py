@@ -3,7 +3,7 @@ import  _thread
 
 from machine import Pin, I2C
 
-from PicoLib import ScoreBord
+from reflexesgame import ScoreBord
 
 class ScoreBordDig4Seg7(ScoreBord):
     """4桁7セグディスプレイ使用のスコアボードクラス"""
@@ -47,6 +47,7 @@ class ScoreBordDig4Seg7(ScoreBord):
         "F": 0b01110001,
         "G": 0b00111101,
         "H": 0b01110110,
+        "K": 0b01110101,
         "L": 0b00111000,
         "O": 0b00111111,
         "U": 0b00111110,
@@ -201,10 +202,10 @@ class ScoreBordDig4Seg7(ScoreBord):
 
     def output_clear(self):
         """ゲームクリア表示"""
-        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_1, bytes([self._CHAR["A"]]))
-        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes([self._CHAR["L"]]))
-        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes([self._CHAR["L"]]))
-        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes([self._CHAR["!"]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_1, bytes([self._CHAR["O"]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes([self._CHAR["K"]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes([self._CHAR["!"]]))
+        self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes([self._CHAR[" "]]))
 
 
     def output_foul(self):
@@ -220,7 +221,7 @@ class ScoreBordDig4Seg7(ScoreBord):
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes(self._FULLBIT))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes(self._FULLBIT))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_4, bytes(self._FULLBIT))
-        utime.sleep(2)
+        utime.sleep(5)
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_1, bytes([self._CHAR[" "]]))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_2, bytes([self._CHAR[" "]]))
         self._i2c.writeto_mem(self._addr, self._DIG_ADDR_3, bytes([self._CHAR[" "]]))

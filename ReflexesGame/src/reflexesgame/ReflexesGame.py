@@ -2,7 +2,10 @@ import utime
 import random
 import _thread
 
-from PicoLib import Buzzer, InputSwitch, Led, ScoreBord
+from PicoLib import Buzzer, InputSwitch, Led
+from reflexesgame import HiLowBuzzer, ResultLight, ScoreBord
+
+
 
 class ReflexesGame:
     """反応速度を測るゲーム処理クラス"""
@@ -19,48 +22,42 @@ class ReflexesGame:
     def __init__(self
                  , lightes: list[Led]
                  , buttons: list[InputSwitch]
-                 , buzzer_l: Buzzer
-                 , buzzer_h: Buzzer
+                 , hl_buzzer: HiLowBuzzer
                  , score_bord: ScoreBord
-                 , led_highscore: Led
-                 , led_timeup: Led
+                 , result_light: ResultLight
                  , order_size: int = 10):
         """初期化
 
             Aggs:
                 lights: ライト用LED配列
                 buttons: ボタン配列
-                buzzer_l: 低音ブザー
-                buzzer_h: 高音ブザー
+                hl_buzzer: 高低音ブザー
                 score_bord: 点数表示用ディスプレイ
-                led_highscore: スコア更新LED
-                led_timeup: 時間切れLED
+                result_light: 結果表示ライト
                 order_size: ゲーム終了までのボタン順の長さ(デフォルト10)
         """
         self._BUTTON_COUNT = len(lightes)
         self._ORDER_LIST_SIZE = order_size
         self._lightes = lightes
         self._buttons = buttons
-        self._buzzer_l = buzzer_l
-        self._buzzer_h = buzzer_h
+        self._hl_buzzer = hl_buzzer
         self._score_bord = score_bord
-        self._led_highscore = led_highscore
-        self._led_timeup = led_timeup
+        self._result_light = result_light
 
     def parts_check(self):
         """パーツチェック"""
         # ライトチェック
         for l in self._lightes:
             l.on()
-        utime.sleep(2)
+        utime.sleep(5)
         for l in self._lightes:
             l.off()
         # 結果ライト、ブザーチェック
-        self._led_highscore.on()
-        self._buzzer_h.beep()
+        self._result_light.show_highscore()
+        self._hl_buzzer.hi_beep()
         utime.sleep(2)
-        self._led_timeup.on()
-        self._buzzer_l.beep()
+        self._result_light.show_timeup()
+        self._hl_buzzer.low_beep()
         utime.sleep(2)
         # 7セグディスプレイチェック
         self._score_bord.display_check()
@@ -70,14 +67,13 @@ class ReflexesGame:
             btn_cnt = 0
             for b in self._buttons:
                 if b.is_on():
-                    self._buzzer_l.beep()
+                    self._hl_buzzer.low_beep()
                     btn_cnt += 1
         self._init_display()
 
     def _init_display(self):
         """表示系初期化"""
-        self._led_highscore.off()
-        self._led_timeup.off()
+        self._result_light.off_all()
         for light_idx in range(self._BUTTON_COUNT):
             self._lightes[light_idx].off()
 
@@ -104,7 +100,7 @@ class ReflexesGame:
         print("Game Start!")
         # 待機時アニメーション停止
         self._is_waiting_mode = False
-        self._buzzer_h.beep(1000)
+        self._hl_buzzer.hi_beep(1000)
         utime.sleep_ms(500)
         # 初期化
         self._init_display()
@@ -149,9 +145,9 @@ class ReflexesGame:
     def _game_finish(self, score:int):
         """ゲーム終了"""
         self._last_score = score
-        self._buzzer_l.beep(500)
+        self._hl_buzzer.low_beep(500)
         utime.sleep_ms(100)
-        self._buzzer_h.beep(1000)
+        self._hl_buzzer.hi_beep(1000)
         self._score_bord.counter_stop(score)
         self._score_bord.output_clear()
         if score > self._high_score:
@@ -164,13 +160,13 @@ class ReflexesGame:
             score: ゲームスコア
         """
         self._high_score = score
-        self._led_highscore.on()
+        self._result_light.show_highscore()
         utime.sleep(1)
-        self._buzzer_l.beep(50)
+        self._hl_buzzer.low_beep(50)
         utime.sleep_ms(50)
-        self._buzzer_l.beep(50)
+        self._hl_buzzer.low_beep(50)
         utime.sleep_ms(50)
-        self._buzzer_h.beep(1000)
+        self._hl_buzzer.hi_beep(1000)
 
     def _time_over(self, order_idx:int):
         """時間切れゲームオーバー処理
@@ -181,33 +177,33 @@ class ReflexesGame:
         print("Time Over! {0:02}".format(self._ORDER_LIST_SIZE - order_idx))
         self._last_score = 0
         self._score_bord.counter_stop(0)
-        self._buzzer_l.beep(1000)
-        self._led_timeup.on()
+        self._hl_buzzer.low_beep(1000)
+        self._result_light.show_timeup()
         self._score_bord.output_foul()
 
     def _start_signal(self):
         """ゲーム開始時演出"""
         self._score_bord.output_message("# 3#")
-        self._buzzer_l.beep()
+        self._hl_buzzer.low_beep()
         utime.sleep_ms(800)
         self._score_bord.output_message("= 2=")
-        self._buzzer_l.beep()
+        self._hl_buzzer.low_beep()
         utime.sleep_ms(800)
         self._score_bord.output_message("_ 1_")
-        self._buzzer_l.beep()
+        self._hl_buzzer.low_beep()
         utime.sleep_ms(800)
         self._score_bord.output_message("GO!!")
-        self._buzzer_h.beep(500)
+        self._hl_buzzer.hi_beep(500)
 
     def _light_on(self, light_index:int):
         """ライト点灯処理"""
-        self._buzzer_l.beep()
+        self._hl_buzzer.low_beep()
         self._lightes[light_index].on()
 
     def _light_hit(self, light_index:int):
         """ライト消灯処理"""
         self._lightes[light_index].off()
-        self._buzzer_h.beep()
+        self._hl_buzzer.hi_beep()
 
     def _isHit(self, btn_idx:int):
         return self._buttons[btn_idx].is_on()
@@ -221,15 +217,14 @@ class ReflexesGame:
             if is_show_highscore:
                 if self._last_score < 1:
                     self._score_bord.output_foul()
-                    self._led_timeup.on()
+                    self._result_light.show_timeup()
                 else:
                     self._score_bord.output_count(self._last_score)
-                self._led_highscore.off()
+                self._result_light.off_all()
                 is_show_highscore = False
             else:
                 self._score_bord.output_count(self._high_score)
-                self._led_highscore.on()
-                self._led_timeup.off()
+                self._result_light.show_highscore()
                 is_show_highscore = True
             utime.sleep(2)
         self._init_display()
@@ -259,15 +254,18 @@ class ReflexesGameTester:
     BUZZER_H = Buzzer(16)
     LED_HIGHSCORE = Led(14)
     LED_TIMEISUP = Led(15)
+    HL_BUZZER = HiLowBuzzer(BUZZER_H, BUZZER_L)
+    RESULT_LIGHT = ResultLight(LED_HIGHSCORE, LED_TIMEISUP)
 
     def __init__(self):
         self.SCOREBORD = ScoreBord(0, 21, 20)
+        
         # self.SCOREBORD.setEngPin(22)
         self.SCOREBORD.set_i2c_addr(0x70)
         self._clz = ReflexesGame(self.LIGHTS, self.BUTTONS,
-                                 self.BUZZER_L, self.BUZZER_H,
-                                 self.SCOREBORD, self.LED_HIGHSCORE,
-                                 self.LED_TIMEISUP)
+                                 self.HL_BUZZER,
+                                 self.SCOREBORD,
+                                 self.RESULT_LIGHT)
 
     def order_list_test(self):
         print("len:5 cnt:3")
