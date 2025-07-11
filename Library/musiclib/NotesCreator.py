@@ -86,4 +86,5 @@ if __name__  == "__main__":
     music_notes = creator.create_for_pwm(notes_input)
     p_buzzer = PwmBuzzer(0)
     p_buzzer.play_music(music_notes)
+    [print(note) for note in music_notes]
     print("test end   ----")
