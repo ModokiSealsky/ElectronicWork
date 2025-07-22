@@ -5,6 +5,11 @@ from matrixlib import MatrixCharactor
 
 
 class MatrixLed:
+    """マトリクスLED(抽象)クラス
+    描画範囲のビット演算を実装する。
+    秒が処理の出力(__drow)は各子クラスで実装する。
+    """
+
     __width: int = 8
     """マトリクスLEDの横方向LED数"""
     __height: int = 8
@@ -178,32 +183,47 @@ class MatrixLed:
         print("drow stoped.")
 
 
+class MatrixLedTester:
+    """テスト用クラス"""
+
+    def __init__(self, target: MatrixLed) -> None:
+        self.__test_target = target
+
+    def test(self):
+        """テスト"""
+        msg = "ABA"
+        print(msg)
+        time.sleep(2)
+        self.__test_target.set_message(msg)
+        self.__test_target.show()
+        time.sleep(3)
+        self.__test_target.off_with_wait()
+        msg = "ひやしカレー始めました!?"
+        print(msg)
+        time.sleep(2)
+        self.__test_target.set_message(msg)
+        self.__test_target.set_per_ms(500)
+        self.__test_target.show()
+        time.sleep(15)
+        self.__test_target.off_with_wait()
+        msg = "あたたか～いビールあります。"
+        print(msg)
+        time.sleep(2)
+        self.__test_target.set_message(msg)
+        self.__test_target.set_per_ms(300)
+        self.__test_target.show()
+        time.sleep(10)
+        self.__test_target.off()
+        print("called off")
+        time.sleep(2)
+
+
+# ==================
+# テストコード
+# ==================
 if __name__ == "__main__":
     print("test start")
-    msg = "ABA"
-    print(msg)
-    time.sleep(2)
-    m_led = MatrixLed()
-    m_led.set_message(msg)
-    m_led.show()
-    time.sleep(3)
-    m_led.off_with_wait()
-    msg = "ひやしカレー始めました!?"
-    print(msg)
-    time.sleep(2)
-    m_led.set_message(msg)
-    m_led.set_per_ms(500)
-    m_led.show()
-    time.sleep(15)
-    m_led.off_with_wait()
-    msg = "あたたか～いビールあります。"
-    print(msg)
-    time.sleep(2)
-    m_led.set_message(msg)
-    m_led.set_per_ms(300)
-    m_led.show()
-    time.sleep(10)
-    m_led.off()
-    print("called off")
-    time.sleep(2)
+    testtarget = MatrixLed()
+    tester = MatrixLedTester(testtarget)
+    tester.test()
     print("test end")

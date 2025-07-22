@@ -2,7 +2,7 @@ import time
 
 from machine import Pin, Timer
 
-from matrixlib import MatrixLed
+from matrixlib.MatrixLed import MatrixLed, MatrixLedTester
 
 
 class MatrixLed8x8Gpio(MatrixLed):
@@ -100,32 +100,14 @@ class MatrixLed8x8Gpio(MatrixLed):
         self.__is_flipping = False
 
 
+# ==================
+# テストコード
+# ==================
 if __name__ == "__main__":
     print("test start")
-    msg = "ABA"
-    print(msg)
-    time.sleep(2)
-    m_led = MatrixLed8x8Gpio([0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15])
-    m_led.set_message(msg)
-    m_led.show()
-    time.sleep(3)
-    m_led.off_with_wait()
-    msg = "ひやしカレー始めました!?"
-    print(msg)
-    time.sleep(2)
-    m_led.set_message(msg)
-    m_led.set_per_ms(500)
-    m_led.show()
-    time.sleep(15)
-    m_led.off_with_wait()
-    msg = "あたたか～いビールあります。"
-    print(msg)
-    time.sleep(2)
-    m_led.set_message(msg)
-    m_led.set_per_ms(300)
-    m_led.show()
-    time.sleep(10)
-    m_led.off()
-    print("called off")
-    time.sleep(2)
+    testtarget = MatrixLed8x8Gpio(
+        [0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15]
+    )
+    tester = MatrixLedTester(testtarget)
+    tester.test()
     print("test end")
