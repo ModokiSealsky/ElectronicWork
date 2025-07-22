@@ -4,16 +4,20 @@ import time
 class StepMotor:
     """ステッピングモーター制御(抽象)クラス"""
 
-    def __init__(self, is_counter: bool = False, one_lap_step: int = 200):
+    def __init__(
+        self, is_counter: bool = False, one_lap_step: int = 200, puls_wait_ms: int = 5
+    ):
         """コンストラクタ
 
         Args:
             is_counter: 反時計回り(正負逆転)指定
             one_lap_step: 1回転ステップ数
+            puls_wait_ms: ステップ間隔ミリ秒
         """
         print("init start")
         self.set_counterclockwise(is_counter)
         self.set_one_lap_step(one_lap_step)
+        self.set_puls_wait_ms(puls_wait_ms)
         print("init end")
 
     def set_counterclockwise(self, is_counter: bool):
@@ -36,6 +40,15 @@ class StepMotor:
         print(
             f"set_one_lap_step:{self.__one_lap_step} | angle_racio:{self.__angle_racio}"
         )
+
+    def set_puls_wait_ms(self, ms: int):
+        """ステップ間隔指定
+
+        Args:
+            ms: ステップ間隔ミリ秒
+        """
+        self.__puls_wait_ms = ms
+        print(f"set_puls_wait_ms:{self.__puls_wait_ms}")
 
     def turn_step(self, step: int):
         """指定ステップ数回転

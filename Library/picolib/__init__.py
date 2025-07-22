@@ -1,1 +1,1 @@
-from .StepMotor import StepMortorType, StepMotor
+from .StepMotor import StepMotor
