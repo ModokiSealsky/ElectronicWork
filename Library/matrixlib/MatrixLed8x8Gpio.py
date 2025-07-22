@@ -10,7 +10,7 @@ class MatrixLed8x8Gpio(MatrixLed):
 
     __SIZE = 8
     """マトリクスサイズ"""
-    __COL_BIT_MASK_LIST = [
+    __COLS_BIT_MASK_LIST = [
         0b10000000,
         0b01000000,
         0b00100000,
@@ -75,31 +75,26 @@ class MatrixLed8x8Gpio(MatrixLed):
         # ドットが一瞬で消えるので、指定期間ループする処理が必要
         while self.__is_flipping:
             for row_idx in range(self.__SIZE):
-                self.__chabge_row(row_idx)
+                # 全行の電源をoff
+                [pin.off() for pin in self.__rows_power_pin_list]
+                # 全列を消灯(GND側をONで電位差が無くなるので消灯となる)
+                [pin.on() for pin in self.__cols_gnd_pin_list]
+                # 該当業に電力を供給
+                self.__rows_power_pin_list[row_idx].on()
+                # 該当業の各列のonとoffを設定
                 row_pattern = pattern[row_idx]
                 for col_idx in range(self.__SIZE):
-                    if row_pattern & self.__COL_BIT_MASK_LIST[col_idx]:
-                        self.__rows_power_pin_list[col_idx].on()
-                    else:
-                        self.__rows_power_pin_list[col_idx].off()
+                    # GND側をOFFで電位差が発生するので点灯となる
+                    if row_pattern & self.__COLS_BIT_MASK_LIST[col_idx]:
+                        self.__cols_gnd_pin_list[col_idx].off()
+                time.sleep(0.001)
+        self.__hidden()
 
     def __hidden(self):
         """消灯(各クラスで実装すること)"""
         print("gpio display off")
         [pin.off() for pin in self.__rows_power_pin_list]
         [pin.on() for pin in self.__cols_gnd_pin_list]
-
-    def __chabge_row(self, row_idx: int):
-        """描画行変更
-
-        Args:
-            row_no (int): 描画行番号
-        """
-        for list_idx in range(self.__SIZE):
-            if list_idx == row_idx:
-                self.__cols_gnd_pin_list[list_idx].off()
-            else:
-                self.__cols_gnd_pin_list[list_idx].on()
 
     def __cut_flip(self, timer):
         self.__is_flipping = False
@@ -110,7 +105,7 @@ if __name__ == "__main__":
     msg = "ABA"
     print(msg)
     time.sleep(2)
-    m_led = MatrixLed8x8Gpio([0, 1, 2, 3, 4, 5, 6, 7], [15, 14, 13, 12, 11, 10, 9, 8])
+    m_led = MatrixLed8x8Gpio([0, 1, 2, 3, 4, 5, 6, 7], [8, 9, 10, 11, 12, 13, 14, 15])
     m_led.set_message(msg)
     m_led.show()
     time.sleep(3)
