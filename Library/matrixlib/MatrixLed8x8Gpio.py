@@ -22,17 +22,21 @@ class MatrixLed8x8Gpio(MatrixLed):
     ]
     """点灯列判定用ビットマスク配列"""
 
-    def __init__(self, on_pin_list: list[int], gnd_pin_list: list[int]):
+    def __init__(self, rows_power_pin_list: list[int], cols_gnd_pin_list: list[int]):
         """コンストラクタ
 
         Args:
-            on_pin_list (list[int]): 点灯ピンリスト(左から右の順に指定)
-            gnd_pin_list (list[int]): GNDピンリスト（上から下の順に指定）
+            rows_power_pin_list (list[int]): 行用電力出力ピンリスト(上から下の順に指定)
+            cols_gnd_pin_list (list[int]): 列用GNDピンリスト（左から右の順に指定）
         """
         super().__init__()
         super().set_size(self.__SIZE, self.__SIZE)
-        self.__on_pin_list = [Pin(pin_no, Pin.OUT) for pin_no in on_pin_list]
-        self.__gnd_pin_list = [Pin(pin_no, Pin.OUT) for pin_no in gnd_pin_list]
+        self.__rows_power_pin_list = [
+            Pin(pin_no, Pin.OUT) for pin_no in rows_power_pin_list
+        ]
+        self.__cols_gnd_pin_list = [
+            Pin(pin_no, Pin.OUT) for pin_no in cols_gnd_pin_list
+        ]
         self.__timer = Timer(-1)
         self.__flip_ms = int(self.__per_ms / self.__SIZE)
         self.__is_flipping = False
@@ -75,15 +79,15 @@ class MatrixLed8x8Gpio(MatrixLed):
                 row_pattern = pattern[row_idx]
                 for col_idx in range(self.__SIZE):
                     if row_pattern & self.__COL_BIT_MASK_LIST[col_idx]:
-                        self.__on_pin_list[col_idx].on()
+                        self.__rows_power_pin_list[col_idx].on()
                     else:
-                        self.__on_pin_list[col_idx].off()
+                        self.__rows_power_pin_list[col_idx].off()
 
     def __hidden(self):
         """消灯(各クラスで実装すること)"""
         print("gpio display off")
-        [pin.off() for pin in self.__on_pin_list]
-        [pin.on() for pin in self.__gnd_pin_list]
+        [pin.off() for pin in self.__rows_power_pin_list]
+        [pin.on() for pin in self.__cols_gnd_pin_list]
 
     def __chabge_row(self, row_idx: int):
         """描画行変更
@@ -93,9 +97,9 @@ class MatrixLed8x8Gpio(MatrixLed):
         """
         for list_idx in range(self.__SIZE):
             if list_idx == row_idx:
-                self.__gnd_pin_list[list_idx].off()
+                self.__cols_gnd_pin_list[list_idx].off()
             else:
-                self.__gnd_pin_list[list_idx].on()
+                self.__cols_gnd_pin_list[list_idx].on()
 
     def __cut_flip(self, timer):
         self.__is_flipping = False
