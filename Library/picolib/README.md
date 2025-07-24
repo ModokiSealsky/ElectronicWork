@@ -49,6 +49,13 @@ namespace picolib {
         off()
     }
 
+    class PwmMotorDriver{
+        init(pin_a_no: int, pin_b_no: int, freq: int = 50)
+        set_speed(speed_percent: float)
+        brake()
+        off()
+    }
+
     class Servo{
         init(pwm_pin_no:int)
         set_angle(angle:float)
@@ -105,6 +112,13 @@ reflechでトリガーを更新し、onトリガーとoffトリガーを取得�
 
 発光ダイオード。
 点灯(on)と消灯(off)ができる。
+
+### PwmMotorDriver
+
+モータードライバにPWM信号を送信してDCモーターを制御する。
+制御ピン2本の電位差で速度が変更できるモータードライバに対応する。
+※PWMの周波数で電圧を疑似的に変化させている
+正転と逆転が期待と異なる場合は配線を逆にして対応すること。
 
 ### Servo
 
