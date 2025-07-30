@@ -45,33 +45,6 @@ class ReflexesGame:
         self._score_bord = score_bord
         self._result_light = result_light
 
-    def parts_check(self):
-        """パーツチェック"""
-        # ライトチェック
-        for l in self._lightes:
-            l.on()
-        utime.sleep(5)
-        for l in self._lightes:
-            l.off()
-        # 結果ライト、ブザーチェック
-        self._result_light.show_highscore()
-        self._hl_buzzer.hi_beep()
-        utime.sleep(2)
-        self._result_light.show_timeup()
-        self._hl_buzzer.low_beep()
-        utime.sleep(2)
-        # 7セグディスプレイチェック
-        self._score_bord.display_check()
-        # ボタンチェック 2個以上同時押しで終了
-        btn_cnt = 0
-        while btn_cnt < 2:
-            btn_cnt = 0
-            for b in self._buttons:
-                if b.is_on():
-                    self._hl_buzzer.low_beep()
-                    btn_cnt += 1
-        self._init_display()
-
     def _init_display(self):
         """表示系初期化"""
         self._result_light.off_all()
@@ -269,12 +242,6 @@ class ReflexesGameTester:
         print("len:10 cnt:6")
         print(self._clz.order_shafle(10, 6))
 
-    def parts_check(self):
-        """各パーツチェック"""
-        print("Parts Check Start")
-        self._clz.parts_check()
-        print("Parts Check End")
-    
     def start_game(self):
         """ゲーム開始"""
         self._clz.game_stert()
@@ -293,8 +260,6 @@ if __name__ == "__main__":
     tester = ReflexesGameTester(se_unit)
     # 点灯順番生成
     tester.order_list_test()
-    # 各パーツチェック
-    tester.parts_check()
     # ゲーム開始
     tester.start_game()
     print("test end")
