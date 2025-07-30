@@ -5,8 +5,15 @@ import _thread
 class SoundEffectUnit:
     """効果音再生ユニット"""
 
+    __ng_thread_exectng: bool = False
+    """ng音スレッド起動中フラグ"""
+
     def ng(self):
         """お手付き音"""
+        if self.__ng_thread_exectng:
+            # スレッドの多重起動防止
+            return
+        self.__ng_thread_exectng = True
         # カウントダウンを止めないためにスレッド使用
         _thread.start_new_thread(self.__ng, ())
 
