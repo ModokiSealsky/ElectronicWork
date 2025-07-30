@@ -51,9 +51,9 @@ class ReflexesGame:
         for light_idx in range(self._BUTTON_COUNT):
             self._lightes[light_idx].off()
 
-    def order_shafle(self, order_list_size:int, button_count:int):
+    def order_shafle(self, order_list_size: int, button_count: int):
         """ゲーム初期化
-        
+
             ゲーム中のボタン順をランダムで生成する。
             (同一ボタンが連続で設定されないように調整済)
 
@@ -61,7 +61,7 @@ class ReflexesGame:
             order_list_size: ボタン順番の長さ(クリアまでのボタン数)
             button_count: ゲームボタン数
         """
-        order_list:list[int] = []
+        order_list: list[int] = []
         for order_idx in range(order_list_size):
             target_idx = random.randint(1, button_count) % button_count
             if order_idx > 0 and order_list[order_idx - 1] == target_idx:
@@ -89,9 +89,9 @@ class ReflexesGame:
 
     def _game_roop(self, order_list: list[int]):
         """ゲーム処理ループ
-        
-            Args:
-                order_list: ボタン順リスト 
+
+        Args:
+            order_list: ボタン順リスト
         """
         score = 9999
         order_idx = 0
@@ -203,13 +203,15 @@ class ReflexesGame:
         if self._is_waiting_mode:
             return
         self._is_waiting_mode = True
-        self._waiting_thread = _thread.start_new_thread(self._waiting_animation, ())        
+        self._waiting_thread = _thread.start_new_thread(self._waiting_animation, ())
+
 
 # ==================
 # テストコード
-# ================== 
+# ==================
 class ReflexesGameTester:
     """テスタークラス"""
+
     LIGHTS = [Led(2), Led(4), Led(6), Led(8), Led(10), Led(12)]
     BUTTONS = [
         InputSwitch(3),
@@ -217,8 +219,8 @@ class ReflexesGameTester:
         InputSwitch(7),
         InputSwitch(9),
         InputSwitch(11),
-        InputSwitch(13)
-        ]
+        InputSwitch(13),
+    ]
     BUZZER_L = Buzzer(17)
     BUZZER_H = Buzzer(16)
     LED_HIGHSCORE = Led(14)
