@@ -2,9 +2,8 @@ import utime
 import random
 import _thread
 
-from PicoLib import Buzzer, InputSwitch, Led
-from reflexesgame import HiLowBuzzer, ResultLight, ScoreBord
-
+from picolib import Buzzer, InputSwitch, Led
+from reflexesgame import SoundEffectUnit, ResultLight, ScoreBord
 
 
 class ReflexesGame:
@@ -19,57 +18,32 @@ class ReflexesGame:
     _is_waiting_mode = True
     """ゲーム開始待ち状態フラグ"""
 
-    def __init__(self
-                 , lightes: list[Led]
-                 , buttons: list[InputSwitch]
-                 , hl_buzzer: HiLowBuzzer
-                 , score_bord: ScoreBord
-                 , result_light: ResultLight
-                 , order_size: int = 10):
+    def __init__(
+        self,
+        lightes: list[Led],
+        buttons: list[InputSwitch],
+        se_unit: SoundEffectUnit,
+        score_bord: ScoreBord,
+        result_light: ResultLight,
+        order_size: int = 10,
+    ):
         """初期化
 
-            Aggs:
-                lights: ライト用LED配列
-                buttons: ボタン配列
-                hl_buzzer: 高低音ブザー
-                score_bord: 点数表示用ディスプレイ
-                result_light: 結果表示ライト
-                order_size: ゲーム終了までのボタン順の長さ(デフォルト10)
+        Aggs:
+            lights: ライト用LED配列
+            buttons: ボタン配列
+            se_unit: 効果音再生ユニット
+            score_bord: 点数表示用ディスプレイ
+            result_light: 結果表示ライト
+            order_size: ゲーム終了までのボタン順の長さ(デフォルト10)
         """
         self._BUTTON_COUNT = len(lightes)
         self._ORDER_LIST_SIZE = order_size
         self._lightes = lightes
         self._buttons = buttons
-        self._hl_buzzer = hl_buzzer
+        self._se_unit = se_unit
         self._score_bord = score_bord
         self._result_light = result_light
-
-    def parts_check(self):
-        """パーツチェック"""
-        # ライトチェック
-        for l in self._lightes:
-            l.on()
-        utime.sleep(5)
-        for l in self._lightes:
-            l.off()
-        # 結果ライト、ブザーチェック
-        self._result_light.show_highscore()
-        self._hl_buzzer.hi_beep()
-        utime.sleep(2)
-        self._result_light.show_timeup()
-        self._hl_buzzer.low_beep()
-        utime.sleep(2)
-        # 7セグディスプレイチェック
-        self._score_bord.display_check()
-        # ボタンチェック 2個以上同時押しで終了
-        btn_cnt = 0
-        while btn_cnt < 2:
-            btn_cnt = 0
-            for b in self._buttons:
-                if b.is_on():
-                    self._hl_buzzer.low_beep()
-                    btn_cnt += 1
-        self._init_display()
 
     def _init_display(self):
         """表示系初期化"""
@@ -77,9 +51,9 @@ class ReflexesGame:
         for light_idx in range(self._BUTTON_COUNT):
             self._lightes[light_idx].off()
 
-    def order_shafle(self, order_list_size:int, button_count:int):
+    def order_shafle(self, order_list_size: int, button_count: int):
         """ゲーム初期化
-        
+
             ゲーム中のボタン順をランダムで生成する。
             (同一ボタンが連続で設定されないように調整済)
 
@@ -87,7 +61,7 @@ class ReflexesGame:
             order_list_size: ボタン順番の長さ(クリアまでのボタン数)
             button_count: ゲームボタン数
         """
-        order_list:list[int] = []
+        order_list: list[int] = []
         for order_idx in range(order_list_size):
             target_idx = random.randint(1, button_count) % button_count
             if order_idx > 0 and order_list[order_idx - 1] == target_idx:
@@ -100,7 +74,7 @@ class ReflexesGame:
         print("Game Start!")
         # 待機時アニメーション停止
         self._is_waiting_mode = False
-        self._hl_buzzer.hi_beep(1000)
+        self._se_unit.gamestart()
         utime.sleep_ms(500)
         # 初期化
         self._init_display()
@@ -115,9 +89,9 @@ class ReflexesGame:
 
     def _game_roop(self, order_list: list[int]):
         """ゲーム処理ループ
-        
-            Args:
-                order_list: ボタン順リスト 
+
+        Args:
+            order_list: ボタン順リスト
         """
         score = 9999
         order_idx = 0
@@ -142,18 +116,17 @@ class ReflexesGame:
         # タイムオーバー処理
         self._time_over(order_idx)
 
-    def _game_finish(self, score:int):
+    def _game_finish(self, score: int):
         """ゲーム終了"""
         self._last_score = score
-        self._hl_buzzer.low_beep(500)
+        self._se_unit.gameclear()
         utime.sleep_ms(100)
-        self._hl_buzzer.hi_beep(1000)
         self._score_bord.counter_stop(score)
         self._score_bord.output_clear()
         if score > self._high_score:
             self._update_score(score)
 
-    def _update_score(self, score:int):
+    def _update_score(self, score: int):
         """ハイスコア更新
 
         Args:
@@ -162,13 +135,9 @@ class ReflexesGame:
         self._high_score = score
         self._result_light.show_highscore()
         utime.sleep(1)
-        self._hl_buzzer.low_beep(50)
-        utime.sleep_ms(50)
-        self._hl_buzzer.low_beep(50)
-        utime.sleep_ms(50)
-        self._hl_buzzer.hi_beep(1000)
+        self._se_unit.highscore()
 
-    def _time_over(self, order_idx:int):
+    def _time_over(self, order_idx: int):
         """時間切れゲームオーバー処理
 
         Args:
@@ -177,35 +146,35 @@ class ReflexesGame:
         print("Time Over! {0:02}".format(self._ORDER_LIST_SIZE - order_idx))
         self._last_score = 0
         self._score_bord.counter_stop(0)
-        self._hl_buzzer.low_beep(1000)
+        self._se_unit.gameover()
         self._result_light.show_timeup()
         self._score_bord.output_foul()
 
     def _start_signal(self):
         """ゲーム開始時演出"""
         self._score_bord.output_message("# 3#")
-        self._hl_buzzer.low_beep()
+        self._se_unit.signal_ready()
         utime.sleep_ms(800)
         self._score_bord.output_message("= 2=")
-        self._hl_buzzer.low_beep()
+        self._se_unit.signal_ready()
         utime.sleep_ms(800)
         self._score_bord.output_message("_ 1_")
-        self._hl_buzzer.low_beep()
+        self._se_unit.signal_ready()
         utime.sleep_ms(800)
         self._score_bord.output_message("GO!!")
-        self._hl_buzzer.hi_beep(500)
+        self._se_unit.signal_go()
 
-    def _light_on(self, light_index:int):
+    def _light_on(self, light_index: int):
         """ライト点灯処理"""
-        self._hl_buzzer.low_beep()
+        self._se_unit.pickup()
         self._lightes[light_index].on()
 
-    def _light_hit(self, light_index:int):
+    def _light_hit(self, light_index: int):
         """ライト消灯処理"""
         self._lightes[light_index].off()
-        self._hl_buzzer.hi_beep()
+        self._se_unit.ok()
 
-    def _isHit(self, btn_idx:int):
+    def _isHit(self, btn_idx: int):
         return self._buttons[btn_idx].is_on()
 
     def _waiting_animation(self):
@@ -234,13 +203,15 @@ class ReflexesGame:
         if self._is_waiting_mode:
             return
         self._is_waiting_mode = True
-        self._waiting_thread = _thread.start_new_thread(self._waiting_animation, ())        
+        self._waiting_thread = _thread.start_new_thread(self._waiting_animation, ())
+
 
 # ==================
 # テストコード
-# ================== 
+# ==================
 class ReflexesGameTester:
     """テスタークラス"""
+
     LIGHTS = [Led(2), Led(4), Led(6), Led(8), Led(10), Led(12)]
     BUTTONS = [
         InputSwitch(3),
@@ -248,24 +219,24 @@ class ReflexesGameTester:
         InputSwitch(7),
         InputSwitch(9),
         InputSwitch(11),
-        InputSwitch(13)
-        ]
+        InputSwitch(13),
+    ]
     BUZZER_L = Buzzer(17)
     BUZZER_H = Buzzer(16)
     LED_HIGHSCORE = Led(14)
     LED_TIMEISUP = Led(15)
-    HL_BUZZER = HiLowBuzzer(BUZZER_H, BUZZER_L)
+    SE_UNIT: SoundEffectUnit
     RESULT_LIGHT = ResultLight(LED_HIGHSCORE, LED_TIMEISUP)
 
-    def __init__(self):
+    def __init__(self, se_unit):
         self.SCOREBORD = ScoreBord(0, 21, 20)
-        
+
         # self.SCOREBORD.setEngPin(22)
         self.SCOREBORD.set_i2c_addr(0x70)
-        self._clz = ReflexesGame(self.LIGHTS, self.BUTTONS,
-                                 self.HL_BUZZER,
-                                 self.SCOREBORD,
-                                 self.RESULT_LIGHT)
+        self.SE_UNIT = se_unit
+        self._clz = ReflexesGame(
+            self.LIGHTS, self.BUTTONS, self.SE_UNIT, self.SCOREBORD, self.RESULT_LIGHT
+        )
 
     def order_list_test(self):
         print("len:5 cnt:3")
@@ -273,22 +244,24 @@ class ReflexesGameTester:
         print("len:10 cnt:6")
         print(self._clz.order_shafle(10, 6))
 
-    def parts_check(self):
-        """各パーツチェック"""
-        print("Parts Check Start")
-        self._clz.parts_check()
-        print("Parts Check End")
-    
     def start_game(self):
         """ゲーム開始"""
         self._clz.game_stert()
 
-if __name__  == "__main__":
-    print("test")
-    tester = ReflexesGameTester()
+
+if __name__ == "__main__":
+    import SoundEffectUnitByPwm as SoundEffectUnitByPwm
+    import SoundEffectUnitByTwinBuzzer as SoundEffectUnitByTwin
+
+    use_pwm_buzzer = False
+    if use_pwm_buzzer:
+        se_unit = SoundEffectUnitByPwm.SoundEffectUnitByPwm(Buzzer(0))
+    else:
+        se_unit = SoundEffectUnitByTwin.SoundEffectUnitByTwin(Buzzer(0), Buzzer(1))
+    print("test start")
+    tester = ReflexesGameTester(se_unit)
     # 点灯順番生成
     tester.order_list_test()
-    # 各パーツチェック
-    tester.parts_check()
     # ゲーム開始
     tester.start_game()
+    print("test end")
