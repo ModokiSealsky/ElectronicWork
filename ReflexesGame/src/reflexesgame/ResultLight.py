@@ -1,5 +1,6 @@
 import utime
 
+
 class ResultLight:
     """結果表示ライトクラス"""
 
@@ -28,18 +29,24 @@ class ResultLight:
         self._led_highscore.off()
         self._led_timeup.off()
 
+    def check(self):
+        """動作確認"""
+        self.show_highscore()
+        utime.sleep(1)
+        self.show_timeup()
+        utime.sleep(1)
+        self.off_all()
+
+
 # ==================
 # テストコード
 # ==================
-if __name__  == "__main__":
+if __name__ == "__main__":
     print("test start ----")
     from PicoLib import Led
+
     highscore = Led(14)
     timeisup = Led(15)
     result_light = ResultLight(highscore, timeisup)
-    result_light.show_highscore()
-    utime.sleep(1)
-    result_light.show_timeup()
-    utime.sleep(1)
-    result_light.off_all()
+    result_light.check()
     print("test end   ----")
