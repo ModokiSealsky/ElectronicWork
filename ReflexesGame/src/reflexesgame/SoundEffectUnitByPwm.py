@@ -64,7 +64,7 @@ class SoundEffectUnitByPwm(SoundEffectUnit):
 
     def signal_go(self):
         """信号機GO音"""
-        self.__buzzer.hz_beep(100, 4000)
+        self.__buzzer.hz_beep(500, 4000)
 
     def check(self):
         """確認"""
