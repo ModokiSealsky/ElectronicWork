@@ -5,4 +5,4 @@ from .ResultLight import ResultLight
 from .ReflexesGame import ReflexesGame
 from .SoundEffectUnit import SoundEffectUnit
 from .SoundEffectUnitByPwm import SoundEffectUnitByPwm
-from .SoundEffectUnitByTwinBuzzer import SoundEffectUnitByTwin
+from .SoundEffectUnitByTwinBuzzer import SoundEffectUnitByTwinBuzzer

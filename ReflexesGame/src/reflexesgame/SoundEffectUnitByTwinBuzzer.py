@@ -5,7 +5,7 @@ from picolib import Buzzer
 from reflexesgame.SoundEffectUnit import SoundEffectUnit, SoundEffectUnitTester
 
 
-class SoundEffectUnitByTwin(SoundEffectUnit):
+class SoundEffectUnitByTwinBuzzer(SoundEffectUnit):
     """圧電ブザー使用による効果音再生ユニット"""
 
     def __init__(self, buzzer_h: Buzzer, buzzer_l: Buzzer):
