@@ -1,6 +1,7 @@
 import neopixel
 from machine import Pin
 
+
 class ColorLed:
     """カラーLED(neopixcel利用版)クラス"""
 
@@ -51,18 +52,15 @@ class ColorLed:
 
     def on_color(self, color: int):
         """カラー指定で点灯"""
-        self.__on_rgb(
-            (color >> 16) & 0xFF,
-            (color >> 8) & 0xFF,
-            color & 0xFF
-        )
+        self.__on_rgb((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF)
+
 
 # ==================
 # テストコード
 # ==================
 class ColorLedTester:
-
     def __init__(self, pin_no: int, pixcel_count: int = 1):
+        print(f"init pixcel_count:{pixcel_count}")
         self.__cl = ColorLed(pin_no, pixcel_count)
         self.__cl.off()
 
@@ -81,20 +79,22 @@ class ColorLedTester:
         print("test end   ----")
 
     def test_outvalue(self):
-        print("test start ----")
+        print("test outvalue start ----")
         WAIT = 1
         self.__cl.on_rgb(-1, 256, 0x90)
         time.sleep(WAIT)
-        il.off()
-        print("test end   ----")
+        self.__cl.off()
+        print("test outvalue end   ----")
+
 
 if __name__ == "__main__":
     import time
+
     print("test start ----")
     print("test default ----")
     t = ColorLedTester(16)
     t.test()
-    t.test_outvalue
+    t.test_outvalue()
     print("test any pixcel ----")
     t = ColorLedTester(16, 3)
     t.test()
