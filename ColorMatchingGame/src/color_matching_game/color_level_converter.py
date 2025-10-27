@@ -11,17 +11,20 @@ class ColorLevelConvertor:
         Args:
             volume_u16: ボリューム値(u16)
         """
-        if volume_u16 < VolumeSeparatValue.POOR:
-            return LightLevel.OFF
-        if volume_u16 < VolumeSeparatValue.LOW:
-            return LightLevel.POOR
         if volume_u16 < VolumeSeparatValue.MIDDLE:
-            return LightLevel.LOW
-        if volume_u16 < VolumeSeparatValue.HIGH:
-            return LightLevel.MIDDLE
-        if volume_u16 < VolumeSeparatValue.MAX:
-            return LightLevel.HIGH
-        return LightLevel.MAX
+            if volume_u16 < VolumeSeparatValue.POOR:
+                return LightLevel.OFF
+            elif volume_u16 < VolumeSeparatValue.LOW:
+                return LightLevel.POOR
+            else:
+                return LightLevel.LOW
+        else:
+            if volume_u16 < VolumeSeparatValue.HIGH:
+                return LightLevel.MIDDLE
+            elif volume_u16 < VolumeSeparatValue.MAX:
+                return LightLevel.HIGH
+            else:
+                return LightLevel.MAX
 
 
 class ColorLevelConvertorForEasy(ColorLevelConvertor):
@@ -38,26 +41,32 @@ class ColorLevelConvertorForNormal(ColorLevelConvertor):
     """NORMAL用カラーレベル変換クラス"""
 
     def get_colr_level(self, volume_u16: int) -> int:
-        if volume_u16 < VolumeSeparatValue.LOW:
-            return LightLevel.OFF
-        elif volume_u16 < VolumeSeparatValue.HIGH:
-            return LightLevel.MIDDLE
+        if volume_u16 < VolumeSeparatValue.MIDDLE:
+            if volume_u16 < VolumeSeparatValue.LOW:
+                return LightLevel.OFF
+            else:
+                return LightLevel.MIDDLE
         else:
-            return LightLevel.MAX
+            if volume_u16 < VolumeSeparatValue.HIGH:
+                return LightLevel.MIDDLE
+            else:
+                return LightLevel.MAX
 
 
 class ColorLevelConvertorForHard(ColorLevelConvertor):
     """HARD用カラーレベル変換クラス"""
 
     def get_colr_level(self, volume_u16: int) -> int:
-        if volume_u16 < VolumeSeparatValue.POOR:
-            return LightLevel.OFF
-        elif volume_u16 < VolumeSeparatValue.MIDDLE:
-            return LightLevel.MIDDLE
-        elif volume_u16 < VolumeSeparatValue.HIGH:
-            return LightLevel.HIGH
+        if volume_u16 < VolumeSeparatValue.MIDDLE:
+            if volume_u16 < VolumeSeparatValue.POOR:
+                return LightLevel.OFF
+            else:
+                return LightLevel.LOW
         else:
-            return LightLevel.MAX
+            if volume_u16 < VolumeSeparatValue.HIGH:
+                return LightLevel.MIDDLE
+            else:
+                return LightLevel.MAX
 
 
 # ==================
