@@ -21,6 +21,19 @@ class LightLevel:
     MAX: int = const(5)
 
 
+class LightValue:
+    """ライト値"""
+
+    __v = [0x00, 0x33, 0x66, 0x99, 0xCC, 0xFF]
+
+    def get_val(self, light_level: int):
+        """ライト値取得
+        Args:
+            light_level: ライトレベル
+        """
+        return self.__v[light_level]
+
+
 class VolumeSeparatValue:
     """ボリューム区分値"""
 
