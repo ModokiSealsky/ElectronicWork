@@ -6,7 +6,7 @@ from color_matching_game.game_const import LightLevel, VolumeSeparatValue
 class ColorLevelConvertor:
     """カラーレベル変換クラス"""
 
-    def get_colr_level(self, volume_u16: int) -> int:
+    def get_color_level(self, volume_u16: int) -> int:
         """カラーレベル取得
         Args:
             volume_u16: ボリューム値(u16)
@@ -30,7 +30,7 @@ class ColorLevelConvertor:
 class ColorLevelConvertorForEasy(ColorLevelConvertor):
     """EASY用カラーレベル変換クラス"""
 
-    def get_colr_level(self, volume_u16: int) -> int:
+    def get_color_level(self, volume_u16: int) -> int:
         if volume_u16 < VolumeSeparatValue.MIDDLE:
             return LightLevel.OFF
         else:
@@ -40,7 +40,7 @@ class ColorLevelConvertorForEasy(ColorLevelConvertor):
 class ColorLevelConvertorForNormal(ColorLevelConvertor):
     """NORMAL用カラーレベル変換クラス"""
 
-    def get_colr_level(self, volume_u16: int) -> int:
+    def get_color_level(self, volume_u16: int) -> int:
         if volume_u16 < VolumeSeparatValue.MIDDLE:
             if volume_u16 < VolumeSeparatValue.LOW:
                 return LightLevel.OFF
@@ -56,7 +56,7 @@ class ColorLevelConvertorForNormal(ColorLevelConvertor):
 class ColorLevelConvertorForHard(ColorLevelConvertor):
     """HARD用カラーレベル変換クラス"""
 
-    def get_colr_level(self, volume_u16: int) -> int:
+    def get_color_level(self, volume_u16: int) -> int:
         if volume_u16 < VolumeSeparatValue.MIDDLE:
             if volume_u16 < VolumeSeparatValue.POOR:
                 return LightLevel.OFF
