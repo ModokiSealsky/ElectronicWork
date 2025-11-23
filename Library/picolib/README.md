@@ -20,21 +20,21 @@
 classDiagram
 namespace picolib {
     class Led{
-        init(gpio_pin_no:int)
+        init(int gpio_pin_no)
         on()
         off()
     }
 
     class PwmMotorDriver{
-        init(pin_a_no: int, pin_b_no: int, freq: int = 50)
-        set_speed(speed_percent: float)
+        init(int pin_a_no, int pin_b_no, int freq default 50)
+        set_speed(float speed_percent)
         brake()
         off()
     }
 
     class Servo{
-        init(pwm_pin_no:int)
-        set_angle(angle:float)
+        init(int pwm_pin_no)
+        set_angle(float angle)
     }
 }
 ```
@@ -64,27 +64,28 @@ Pwm制御のサーボ。
 classDiagram
 namespace buzzer {
     class Buzzer{
-        init(gpio_pin_no:int)
-        beep(ms:int=100)
+        init(int gpio_pin_no)
+        beep(int ms default 100)
     }
 
     class PwmBuzzer{
-        init(pwm_pin_no:int)
-        hz_beep(ms:int=100, hz:int=1000)
-        play_music(music:list[Note])
+        init(int pwm_pin_no)
+        hz_beep(int ms default 100, int hz default 1000)
+        play_music(list[Note] music)
     }
 
-    class PwmBuzzer.Note {
-        init(ms:int, hz:int, end_wait_ms:int = 10)
+    class Note {
+        init(int ms, int hz, int end_wait_ms default 10)
     }
 }
 Buzzer <|-- PwmBuzzer
+PwmBuzzer -- Note
 ```
 
 #### Buzzer
 
-  ブザー。  
-  指定したミリ秒数鳴らすことができる。
+ブザー。  
+指定したミリ秒数鳴らすことができる。
 
 #### PwmBuzzer
 
@@ -99,10 +100,10 @@ Pmw制御ブザー。Buzzerの子クラス。
 classDiagram
 namespace color_led {
     class ColorLed{
-        init(pin_no: int, pixcel_count: int = 1)
-        on_rgb(red_value: int, green_value: int, blue_value: int)
+        init(int pin_no, int pixcel_count default 1)
+        on_rgb(int red_value, int green_value, int blue_value)
         off()
-        on_color(color: int)
+        on_color(int color)
     }
 
     class ColorCode{
@@ -126,7 +127,7 @@ namespace color_led {
     }
 
     class ColorSliderLed{
-        on_rgblist(rgblist: list[int])
+        on_rgblist(list[int] rgblist)
     }
 }
 ColorLed <|-- ColorSliderLed
@@ -140,7 +141,7 @@ ColorLed <|-- ColorSliderLed
 classDiagram
 namespace input_switch {
     class InputSwitch{
-        init(gpio_pin_no:int)
+        init(int gpio_pin_no)
         is_on() bool
         is_off() bool
     }
