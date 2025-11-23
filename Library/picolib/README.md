@@ -172,38 +172,42 @@ classDiagram
 namespace steping_motor {
     class StepMotor{
         <<abstract>>
-        init(is_counter:bool=False, one_lap_step:int=200)
-        set_counterclockwise(is_counter:bool=False)
-        set_one_lap_step(step:int)
-        turn_step(step:int)
-        turn_angle(angle:float)
+        init(bool is_counter default False, int one_lap_step default 200, int puls_wait_ms default 5)
+        turn_step(int step)
+        turn_angle(float angle)
+        off()
+        __turn_step(int step_count)
     }
 
-    class StepMotorUnipolar {
+    class StepMotorUnipolarWithUnl2003 {
+        init(int pin_no1, int pin_no2, int pin_no3, int pin_no4, bool is_counter default False, int one_lap_step default 200, int puls_wait_ms default 5)
+        __turn_step(int step_count)
     }
 
-    class StepMotorBipolar {
+    class StepMotorBipolarWithTb6600 {
+        init(int pin_ena, int pin_dir, int pin_pul, bool is_counter default False, int one_lap_step default 200, int puls_wait_ms default 5)
+        __turn_step(int step_count)
     }
 }
-StepMotor <|-- StepMotorUnipolar
-StepMotor <|-- StepMotorBipolar
+StepMotor <|-- StepMotorUnipolarWithUnl2003
+StepMotor <|-- StepMotorBipolarWithTb6600
 ```
 
 #### StepMotor
 
-ステッピングモーター。
+ステッピングモータークラス。
 指定ステップ数回転、指定角度回転ができる。
 指定角度回転のためには1周に必要なステップの設定が必要。
 マイナス値で反時計回りの想定だが、逆回転するモーターの場合はset_counterclockwise(True)で逆回転モーターであることを指定する。
 
-#### StepMotorUnipolar
+#### StepMotorUnipolarWithUnl2003
 
-ユニポーラ制御ステッピングモーター。
+UNL2003ドライバによるユニポーラステッピングモーター制御クラス。
 StepMotorの子クラス。
 
-#### StepMotorBipolar
+#### StepMotorBipolarWithTb6600
 
-バイポーラ制御ステッピングモーター。
+TB6600ドライバによるバイポーラステッピングモーター制御クラス。
 StepMotorの子クラス。
 
 ---
