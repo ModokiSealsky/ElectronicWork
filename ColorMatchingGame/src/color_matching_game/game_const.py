@@ -1,3 +1,5 @@
+"""定数クラスパッケージ"""
+
 from micropython import const
 
 

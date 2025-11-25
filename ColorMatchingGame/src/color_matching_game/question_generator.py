@@ -1,3 +1,5 @@
+"""問題生成クラスパッケージ"""
+
 import random
 from micropython import const
 

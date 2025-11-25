@@ -1,4 +1,4 @@
-from micropython import const
+"""カラーレベル変換クラスパッケージ"""
 
 from color_matching_game.game_const import LightLevel, VolumeSeparatValue
 
