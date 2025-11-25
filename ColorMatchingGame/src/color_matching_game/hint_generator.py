@@ -4,7 +4,7 @@
 class HintGenerator:
     """ヒント生成クラス"""
 
-    def getHint(self, r, g, b):
+    def get_hint(self, r, g, b):
         """ヒント取得
         Args:
             r: 赤色値
@@ -19,7 +19,7 @@ class HintGenerator:
 class HintGeneratorForEasy(HintGenerator):
     """EASY用ヒント生成クラス"""
 
-    def getHint(self, r, g, b):
+    def get_hint(self, r, g, b):
         # 赤のみを返す
         return (r, 0x00, 0x00)
 
@@ -27,7 +27,7 @@ class HintGeneratorForEasy(HintGenerator):
 class HintGeneratorForNormal(HintGenerator):
     """NORMAL用ヒント生成クラス"""
 
-    def getHint(self, r, g, b):
+    def get_hint(self, r, g, b):
         # 緑のみを返す
         return (0x00, g, 0x00)
 
@@ -35,6 +35,6 @@ class HintGeneratorForNormal(HintGenerator):
 class HintGeneratorForHard(HintGenerator):
     """HARD用ヒント生成クラス"""
 
-    def getHint(self, r, g, b):
+    def get_hint(self, r, g, b):
         # 青のみを返す
         return (0x00, 0x00, b)

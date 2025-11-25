@@ -197,7 +197,7 @@ class ColorMatingGame:
     def __nextQuestion(self):
         """次の問題設定"""
         q_rgb = self.__question_generator.get_question_rgb_level()
-        h_rgb = self.__hint_generator.getHint(q_rgb[0], q_rgb[1], q_rgb[2])
+        h_rgb = self.__hint_generator.get_hint(q_rgb[0], q_rgb[1], q_rgb[2])
         self.__char_master.on_rgb(
             self.__color_values[q_rgb[0]],
             self.__color_values[q_rgb[1]],
