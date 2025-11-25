@@ -1,4 +1,4 @@
-from .color_matching_game import ColorMatingGame
+from .color_matching_game import ColorMatchingGame
 from .display import ScoreBord, TimeBord
 from .game_const import GameMode, LightLevel, LightValue
 from .color_level_converter import (
@@ -15,7 +15,7 @@ from .question_generator import (
 )
 
 __ALL__ = [
-    ColorMatingGame,
+    ColorMatchingGame,
     GameMode,
     LightLevel,
     LightValue,

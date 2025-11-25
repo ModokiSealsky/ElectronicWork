@@ -1,5 +1,4 @@
 from machine import ADC
-from micropython import const
 import time
 
 from picolib import ColorLed, PwmBuzzer, TriggerButton
@@ -26,13 +25,13 @@ from .hint_generator import (
 )
 
 
-class ColorMatingGame:
+class ColorMatchingGame:
     """色合わせゲームクラス"""
 
-    __GAME_TIME_MS = const(9999)
+    __GAME_TIME_MS = 9999
     """ゲーム時間ミリ秒"""
 
-    __FLIP_MS = const(10)
+    __FLIP_MS = 10
     """処理間隔ミリ秒"""
 
     __color_values: list[int] = [0x00, 0x33, 0x66, 0x99, 0xCC, 0xFF]
@@ -234,7 +233,7 @@ class ColorMatingGame:
         """ゲーム開始"""
         if not self.__init_chek():
             return
-        print(f"game level{self.__game_level}")
+        print(f"game level:{self.__game_level}")
         last_time = self.__GAME_TIME_MS
         score = 0
         self.__scorebord.set_score(score)

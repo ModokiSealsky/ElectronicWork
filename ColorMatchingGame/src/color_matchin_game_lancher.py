@@ -3,7 +3,7 @@ from machine import ADC
 
 from picolib import ColorLed, InputSwitch, PwmBuzzer, TriggerButton
 from color_matching_game import (
-    ColorMatingGame,
+    ColorMatchingGame,
     GameMode,
     ScoreBord,
     TimeBord,
@@ -28,7 +28,7 @@ button = TriggerButton(22, True)
 scorebord = ScoreBord()
 timebord = TimeBord()
 # ゲームクラス生成 ======================================
-game = ColorMatingGame()
+game = ColorMatchingGame()
 game.setInputVaolumes(red_volume, green_volume, blue_volume)
 game.setColorLeds(master_led, player_led, support_led)
 game.setBuzzer(buzzer)
